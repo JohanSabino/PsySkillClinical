@@ -7,6 +7,49 @@
     "case_ref": "caso-sintetico-01",
     "created_at": "2026-09-13"
   },
+  "session_config": {
+    "version": "1.0",
+    "intervention_model": "ACT/Hexaflex",
+    "professional_role": "Profesional cualificado (ejemplo sintético)",
+    "clinical_goal": "Observar un patrón y elegir una dirección valiosa",
+    "audience": "clinical",
+    "source_policy": "documents_only",
+    "privacy_mode": "redact",
+    "consent_status": "confirmed",
+    "confirmed_share": false,
+    "external_consent": false,
+    "unknown_fields": []
+  },
+  "source_policy": "documents_only",
+  "documents": [
+    {
+      "id": "doc-sintetico-01",
+      "display_name": "notas-sinteticas.md",
+      "path": "inputs/notas-sinteticas.md",
+      "kind": "markdown",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "selected": true,
+      "extractor": "builtin-markdown",
+      "legibility": "full",
+      "warnings": [],
+      "fragments": [
+        { "id": "doc-sintetico-01-f1", "text": "Contenido sintético usado para ilustrar procedencia.", "source_id": "doc-sintetico-01", "page": null, "section": "bloque-1", "legibility": "full" }
+      ]
+    }
+  ],
+  "privacy": {
+    "mode": "redact",
+    "status": "ready",
+    "input_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "payload_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "rules": ["email", "phone", "date", "identifier", "address"],
+    "counts": {},
+    "audience": "clinical",
+    "source_policy": "documents_only",
+    "warnings": [],
+    "raw_content_included": false,
+    "mapping_storage": "none"
+  },
   "sources": [
     { "id": "src-p1", "kind": "patient_report", "label": "Relato aportado en sesión inicial" },
     { "id": "src-o1", "kind": "clinician_observation", "label": "Observación colaborativa del patrón" },

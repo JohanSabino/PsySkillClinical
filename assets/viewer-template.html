@@ -15,6 +15,20 @@
     h1 { max-width:800px; margin:.2rem 0 .5rem; font-size:clamp(1.8rem,4vw,3rem); }
     h2 { margin-top:2.2rem; }
     .meta { color:var(--muted); margin:0; }
+    .eyebrow { color:var(--accent); font-size:.78rem; font-weight:750; letter-spacing:.08em; margin:0 0 .2rem; text-transform:uppercase; }
+    .summary-panel { background:linear-gradient(135deg,var(--accent-soft),var(--card)); border:1px solid var(--line); border-radius:18px; padding:1.1rem; box-shadow:var(--shadow); }
+    .summary-panel h2 { margin:.15rem 0 .35rem; }
+    .summary-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(95px,1fr)); gap:.6rem; margin:1rem 0 .7rem; }
+    .summary-stats div { background:color-mix(in srgb,var(--card) 82%,transparent); border:1px solid var(--line); border-radius:12px; padding:.55rem .7rem; }
+    .summary-stats dt { color:var(--muted); font-size:.78rem; }
+    .summary-stats dd { font-size:1.45rem; font-weight:750; margin:0; }
+    .summary-chips { margin-bottom:.55rem; }
+    .filters { display:flex; flex-wrap:wrap; align-items:end; gap:.6rem; border-top:1px solid var(--line); padding-top:.8rem; }
+    .filters label { color:var(--muted); display:flex; flex-direction:column; font-size:.82rem; gap:.2rem; }
+    .filters select { border:1px solid var(--line); border-radius:8px; color:var(--ink); background:var(--card); min-height:2rem; padding:.25rem .45rem; }
+    .filters button { min-height:2rem; }
+    .filterable[hidden] { display:none; }
+    .filterable.is-filtered { opacity:.3; }
     .notice { padding:.8rem 1rem; background:#fff6e9; border:1px solid #edc98d; border-radius:12px; }
     .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem; }
     .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1rem; box-shadow:var(--shadow); }
@@ -37,6 +51,7 @@
     @media (prefers-reduced-motion: no-preference) { .card { transition:transform .18s ease,box-shadow .18s ease; } .card:hover { transform:translateY(-2px); box-shadow:0 14px 34px rgba(23,52,58,.14); } }
     @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration:.001ms !important; transition-duration:.001ms !important; scroll-behavior:auto !important; } }
     @media (prefers-color-scheme: dark) { :root { color-scheme:dark; --ink:#e7f0ed; --muted:#b6c8c4; --paper:#142326; --card:#1e3033; --line:#355356; --accent:#8ed2c3; --accent-soft:#23443f; --warm:#f2bf78; --hyp:#c8a9df; --shadow:0 10px 30px rgba(0,0,0,.2); } header { background:linear-gradient(130deg,#193832,#342d20); } .step,details,button { background:var(--card); } }
+    @media (max-width:600px) { .filters { align-items:stretch; flex-direction:column; } .filters label, .filters select, .filters button { width:100%; } }
   </style>
 </head>
 <body>
@@ -54,7 +69,34 @@
   </footer>
   <script type="application/json" id="validation-receipt">{{RECEIPT}}</script>
   <script>
-    (() => { document.querySelectorAll('details').forEach((detail) => { detail.addEventListener('toggle', () => { detail.setAttribute('aria-live', 'polite'); }); }); })();
+    (() => {
+      const cards = [...document.querySelectorAll('.filterable')];
+      const process = document.querySelector('#process-filter');
+      const evidence = document.querySelector('#evidence-filter');
+      const audience = document.querySelector('#audience-filter');
+      const status = document.querySelector('#filter-summary');
+      const reset = document.querySelector('#reset-filters');
+      const apply = () => {
+        const selectedProcess = process?.value ?? 'all';
+        const selectedEvidence = evidence?.value ?? 'all';
+        const selectedAudience = audience?.value ?? 'all';
+        let visible = 0;
+        cards.forEach((card) => {
+          const matchesProcess = selectedProcess === 'all' || (card.dataset.processes ?? '').split(',').includes(selectedProcess);
+          const matchesEvidence = selectedEvidence === 'all' || card.dataset.evidence === selectedEvidence;
+          const matchesAudience = selectedAudience === 'all' || card.dataset.audience === selectedAudience;
+          const show = matchesProcess && matchesEvidence && matchesAudience;
+          card.hidden = !show;
+          card.classList.toggle('is-filtered', !show);
+          if (show) visible += 1;
+        });
+        if (status) status.textContent = `Mostrando ${visible} de ${cards.length} bloques`;
+      };
+      [process, evidence, audience].forEach((control) => control?.addEventListener('change', apply));
+      reset?.addEventListener('click', () => { [process, evidence, audience].forEach((control) => { if (control) control.value = 'all'; }); apply(); });
+      document.querySelectorAll('details').forEach((detail) => { detail.addEventListener('toggle', () => { detail.setAttribute('aria-live', 'polite'); }); });
+      apply();
+    })();
   </script>
 </body>
 </html>

@@ -4,8 +4,12 @@ import path from 'node:path';
 
 const PROCESSES = new Set(['acceptance', 'defusion', 'present_moment', 'self_as_context', 'values', 'committed_action']);
 const STATUSES = new Set(['fact', 'hypothesis', 'shared_decision', 'unknown']);
-const PROVENANCE = new Set(['patient_report', 'clinician_observation', 'measure', 'document', 'inference']);
+const PROVENANCE = new Set(['patient_report', 'clinician_observation', 'measure', 'document', 'inference', 'external']);
 const RELATION_KINDS = new Set(['observation', 'hypothesis', 'objective', 'barrier', 'resource', 'intervention', 'agreed_action']);
+const SOURCE_POLICIES = new Set(['documents_only', 'documents_plus_external', 'external_blocked', 'unknown']);
+const PRIVACY_MODES = new Set(['redact', 'pseudonymize', 'manual_review', 'unknown']);
+const DOCUMENT_KINDS = new Set(['pdf', 'docx', 'markdown', 'text', 'json', 'unknown']);
+const LEGIBILITY = new Set(['full', 'partial', 'unsupported', 'unreadable']);
 const RISK_PATTERNS = [
   /\b(?:suicid(?:io|a|al)|autolesi(?:ón|on)|matarme|hacer(?:me|se)?\s+daño)\b/i,
   /\b(?:plan\s+(?:para|de)\s+(?:suicid|matar|hacer)|violencia\s+inminente|agresi[oó]n\s+inminente|abuso\s+en\s+curso)\b/i
@@ -41,6 +45,47 @@ function itemCheck(item, subject, errors) {
   for (const key of ['id', 'text', 'provenance', 'epistemic_status']) if (!item[key] || typeof item[key] !== 'string') errors.push(issue('ITEM_REQUIRED', `${subject}.${key}`, 'Falta un campo requerido.'));
   if (item.provenance && !PROVENANCE.has(item.provenance)) errors.push(issue('INVALID_PROVENANCE', `${subject}.provenance`, 'Procedencia no permitida.'));
   if (item.epistemic_status && !STATUSES.has(item.epistemic_status)) errors.push(issue('INVALID_EPISTEMIC_STATUS', `${subject}.epistemic_status`, 'Estatus epistémico no permitido.'));
+}
+
+function validateSessionConfig(config, errors) {
+  if (config === undefined) return;
+  if (!config || typeof config !== 'object' || Array.isArray(config)) { errors.push(issue('SESSION_CONFIG_OBJECT', '$.session_config', 'session_config debe ser un objeto.')); return; }
+  for (const key of ['version', 'intervention_model', 'professional_role', 'clinical_goal', 'audience', 'source_policy', 'privacy_mode', 'consent_status']) if (!config[key] || typeof config[key] !== 'string') errors.push(issue('SESSION_CONFIG_REQUIRED', `$.session_config.${key}`, 'Falta una decisión de onboarding.'));
+  if (config.version && config.version !== '1.0') errors.push(issue('SESSION_CONFIG_VERSION', '$.session_config.version', 'Se requiere versión 1.0.'));
+  if (config.audience && !['clinical', 'patient', 'shareable', 'unknown'].includes(config.audience)) errors.push(issue('SESSION_CONFIG_AUDIENCE', '$.session_config.audience', 'Audiencia de sesión no permitida.'));
+  if (config.source_policy && !SOURCE_POLICIES.has(config.source_policy)) errors.push(issue('SESSION_CONFIG_SOURCE_POLICY', '$.session_config.source_policy', 'Política de fuentes no permitida.'));
+  if (config.privacy_mode && !PRIVACY_MODES.has(config.privacy_mode)) errors.push(issue('SESSION_CONFIG_PRIVACY_MODE', '$.session_config.privacy_mode', 'Modo de privacidad no permitido.'));
+  if (config.consent_status && !['pending', 'confirmed', 'declined', 'unknown'].includes(config.consent_status)) errors.push(issue('SESSION_CONFIG_CONSENT', '$.session_config.consent_status', 'Estado de consentimiento no permitido.'));
+  if (config.source_policy === 'documents_plus_external' && config.external_consent !== true) errors.push(issue('EXTERNAL_CONSENT_REQUIRED', '$.session_config.external_consent', 'La búsqueda externa requiere confirmación explícita.'));
+  if (config.audience === 'shareable' && config.confirmed_share !== true) errors.push(issue('SHARE_CONFIRMATION_REQUIRED', '$.session_config.confirmed_share', 'La audiencia compartible requiere confirmación explícita.'));
+}
+
+function validateDocuments(documents, errors) {
+  if (documents === undefined) return;
+  if (!Array.isArray(documents)) { errors.push(issue('DOCUMENTS_ARRAY_REQUIRED', '$.documents', 'documents debe ser un arreglo.')); return; }
+  for (const [index, document] of documents.entries()) {
+    const subject = `$.documents[${index}]`;
+    if (!document || typeof document !== 'object') { errors.push(issue('DOCUMENT_NOT_OBJECT', subject, 'Cada documento debe ser un objeto.')); continue; }
+    for (const key of ['id', 'display_name', 'kind', 'sha256', 'selected', 'extractor', 'legibility', 'fragments']) if (document[key] === undefined) errors.push(issue('DOCUMENT_REQUIRED', `${subject}.${key}`, 'Falta un campo de documento.'));
+    if (document.kind && !DOCUMENT_KINDS.has(document.kind)) errors.push(issue('DOCUMENT_KIND', `${subject}.kind`, 'Tipo de documento no permitido.'));
+    if (document.legibility && !LEGIBILITY.has(document.legibility)) errors.push(issue('DOCUMENT_LEGIBILITY', `${subject}.legibility`, 'Estado de legibilidad no permitido.'));
+    if (document.sha256 && !/^[a-f0-9]{64}$/.test(document.sha256)) errors.push(issue('DOCUMENT_HASH', `${subject}.sha256`, 'El hash debe ser SHA-256 hexadecimal.'));
+    if (document.fragments && !Array.isArray(document.fragments)) errors.push(issue('DOCUMENT_FRAGMENTS', `${subject}.fragments`, 'fragments debe ser un arreglo.'));
+    for (const [fragmentIndex, fragment] of (document.fragments ?? []).entries()) {
+      const fragmentSubject = `${subject}.fragments[${fragmentIndex}]`;
+      for (const key of ['id', 'text', 'source_id', 'legibility']) if (fragment?.[key] === undefined) errors.push(issue('FRAGMENT_REQUIRED', `${fragmentSubject}.${key}`, 'Falta un campo de fragmento.'));
+      if (fragment?.legibility && !LEGIBILITY.has(fragment.legibility)) errors.push(issue('FRAGMENT_LEGIBILITY', `${fragmentSubject}.legibility`, 'Estado de fragmento no permitido.'));
+    }
+  }
+}
+
+function validatePrivacy(privacy, errors) {
+  if (privacy === undefined) return;
+  if (!privacy || typeof privacy !== 'object' || Array.isArray(privacy)) { errors.push(issue('PRIVACY_OBJECT', '$.privacy', 'privacy debe ser un objeto.')); return; }
+  if (privacy.mode && !PRIVACY_MODES.has(privacy.mode)) errors.push(issue('PRIVACY_MODE', '$.privacy.mode', 'Modo de privacidad no permitido.'));
+  if (privacy.status && !['ready', 'blocked', 'review_required'].includes(privacy.status)) errors.push(issue('PRIVACY_STATUS', '$.privacy.status', 'Estado de privacidad no permitido.'));
+  if (privacy.raw_content_included === true) errors.push(issue('PRIVACY_RAW_CONTENT', '$.privacy.raw_content_included', 'El recibo nunca puede incluir contenido crudo.', 'blocking'));
+  if (privacy.status === 'blocked') errors.push(issue('PRIVACY_BLOCKED', '$.privacy.status', 'El payload está bloqueado por privacidad.', 'blocking'));
 }
 
 function scanRisk(data) {
@@ -93,10 +138,25 @@ export function validateCase(data, options = {}) {
     if (data.meta.case_ref && !/^[A-Za-z0-9._-]+$/.test(data.meta.case_ref)) errors.push(issue('CASE_REF', '$.meta.case_ref', 'case_ref debe ser un identificador no directo.'));
   }
   if (!Array.isArray(data.sources)) errors.push(issue('SOURCES_REQUIRED', '$.sources', 'sources debe ser un arreglo.'));
+  if (data.source_policy !== undefined && !SOURCE_POLICIES.has(data.source_policy)) errors.push(issue('SOURCE_POLICY', '$.source_policy', 'Política de fuentes no permitida.'));
+  validateSessionConfig(data.session_config, errors);
+  validateDocuments(data.documents, errors);
+  validatePrivacy(data.privacy, errors);
   if (!data.formulation || typeof data.formulation !== 'object') errors.push(issue('FORMULATION_REQUIRED', '$.formulation', 'Falta formulation.'));
   const ids = new Set();
   const addId = (id, subject) => { if (!id) return; if (ids.has(id)) errors.push(issue('DUPLICATE_ID', subject, `ID repetido: ${id}.`)); ids.add(id); };
-  for (const [index, source] of (data.sources ?? []).entries()) { addId(source.id, `$.sources[${index}].id`); }
+  for (const [index, source] of (data.sources ?? []).entries()) {
+    addId(source.id, `$.sources[${index}].id`);
+    if (source.kind && !new Set([...PROVENANCE]).has(source.kind)) errors.push(issue('INVALID_SOURCE_KIND', `$.sources[${index}].kind`, 'Tipo de fuente no permitido.'));
+    if (source.kind === 'external' && !data.source_policy && !data.session_config?.source_policy) errors.push(issue('SOURCE_POLICY_REQUIRED', `$.sources[${index}]`, 'Una fuente externa requiere una política de fuentes explícita.'));
+    if (source.kind === 'external' && ['documents_only', 'external_blocked'].includes(data.source_policy ?? data.session_config?.source_policy)) errors.push(issue('EXTERNAL_SOURCE_BLOCKED', `$.sources[${index}]`, 'La política activa bloquea fuentes externas.'));
+    if (source.kind === 'external') {
+      for (const key of ['url', 'date', 'title', 'fragment', 'sha256']) if (!source[key]) errors.push(issue('SOURCE_EXTERNAL_TRACEABILITY', `$.sources[${index}].${key}`, 'Una fuente externa requiere URL, fecha, título, fragmento y hash.'));
+      if (source.url && !/^https?:\/\//i.test(source.url)) errors.push(issue('SOURCE_EXTERNAL_URL', `$.sources[${index}].url`, 'La URL externa debe ser HTTP(S).'));
+      if (source.sha256 && !/^[a-f0-9]{64}$/.test(source.sha256)) errors.push(issue('SOURCE_EXTERNAL_HASH', `$.sources[${index}].sha256`, 'El respaldo externo debe tener hash SHA-256.'));
+    }
+  }
+  if (data.source_policy === 'documents_plus_external' && data.session_config?.external_consent !== true) errors.push(issue('EXTERNAL_CONSENT_REQUIRED', '$.session_config.external_consent', 'La búsqueda externa requiere confirmación explícita.'));
   for (const [index, pattern] of (data.formulation?.patterns ?? []).entries()) {
     const subject = `$.formulation.patterns[${index}]`;
     addId(pattern.id, `${subject}.id`);
@@ -147,10 +207,12 @@ export function validateCase(data, options = {}) {
   if (declaredRisk === 'review_required') warnings.push(issue('DECLARED_REVIEW_REQUIRED', '$.safety.risk_screen', 'El caso requiere revisión humana antes de continuar.', 'warning'));
   for (const entry of strings(data)) {
     const isDate = /\b\d{4}-\d{2}-\d{2}\b/.test(entry.text);
-    if (DIRECT_IDENTIFIER.test(entry.text) && !isDate && !entry.subject.includes('.case_ref')) errors.push(issue('PRIVACY_DIRECT_IDENTIFIER', entry.subject, 'Retira identificadores directos antes de derivar artefactos.', 'blocking'));
+    const structural = /(?:\.id|\.case_ref|\.sha256|_sha256|\.path|\.page|\.sequence|\.created_at)$/.test(entry.subject);
+    if (DIRECT_IDENTIFIER.test(entry.text) && !isDate && !structural) errors.push(issue('PRIVACY_DIRECT_IDENTIFIER', entry.subject, 'Retira identificadores directos antes de derivar artefactos.', 'blocking'));
     if (UNSAFE_CLAIMS.test(entry.text)) errors.push(issue('UNSAFE_CLAIM', entry.subject, 'Reformula como límite o hipótesis; no uses diagnóstico, prescripción o garantía automática.', 'blocking'));
   }
   const audience = options.audience ?? data.meta?.audience ?? 'clinical';
+  if (audience === 'shareable' && data.session_config?.audience === 'unknown') errors.push(issue('AUDIENCE_UNKNOWN_BLOCKED', '$.session_config.audience', 'No se puede preparar material compartible hasta decidir la audiencia.', 'blocking'));
   if (audience === 'shareable' && options.confirmShare !== true) errors.push(issue('SHARE_CONFIRMATION_REQUIRED', '$.meta.audience', 'La vista compartible requiere confirmación explícita.', 'blocking'));
   if (audience === 'patient' || audience === 'shareable') {
     const preview = patientPreview(data);
@@ -162,7 +224,7 @@ export function validateCase(data, options = {}) {
 
 function buildChecks(errors, warnings) {
   const blocking = errors.filter((entry) => entry.severity === 'blocking' || entry.severity === 'error');
-  const schemaCodes = /^(?:SCHEMA_VERSION|META_REQUIRED|SOURCES_REQUIRED|FORMULATION_REQUIRED|ITEM_REQUIRED|ITEM_NOT_OBJECT|INVALID_(?:LOCALE|AUDIENCE|PROVENANCE|EPISTEMIC_STATUS|PROCESS|RELATION_KIND|INTERVENTION_STATUS|REVISION_STATUS)|ARRAY_REQUIRED|PATTERN_TITLE|PROCESSES_REQUIRED|RELATION_REQUIRED|SESSION_REQUIRED|SESSION_ARRAY_REQUIRED|INTERVENTION_REQUIRED|REVISION_REQUIRED|DUPLICATE_ID|REVISION_ORDER)$/;
+  const schemaCodes = /^(?:SCHEMA_VERSION|META_REQUIRED|SOURCES_REQUIRED|FORMULATION_REQUIRED|ITEM_REQUIRED|ITEM_NOT_OBJECT|INVALID_(?:LOCALE|AUDIENCE|PROVENANCE|SOURCE_KIND|EPISTEMIC_STATUS|PROCESS|RELATION_KIND|INTERVENTION_STATUS|REVISION_STATUS)|ARRAY_REQUIRED|PATTERN_TITLE|PROCESSES_REQUIRED|RELATION_REQUIRED|SESSION_REQUIRED|SESSION_ARRAY_REQUIRED|INTERVENTION_REQUIRED|REVISION_REQUIRED|DUPLICATE_ID|REVISION_ORDER|SOURCE_POLICY|SOURCE_EXTERNAL_|SESSION_CONFIG_|DOCUMENT_|FRAGMENT_)/;
   return [
     { name: 'schema', passed: !errors.some((entry) => schemaCodes.test(entry.code)) },
     { name: 'provenance', passed: !errors.some((entry) => /PROVENANCE|EPISTEMIC/.test(entry.code)) },

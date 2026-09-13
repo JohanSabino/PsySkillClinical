@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hexaflex-clinical.local/schemas/session.schema.json",
+  "title": "Hexaflex Clinical session contract",
+  "type": "object",
+  "required": ["version", "intervention_model", "professional_role", "clinical_goal", "audience", "source_policy", "privacy_mode", "consent_status"],
+  "properties": {
+    "version": { "const": "1.0" },
+    "intervention_model": { "type": "string", "minLength": 1 },
+    "professional_role": { "type": "string", "minLength": 1 },
+    "clinical_goal": { "type": "string", "minLength": 1 },
+    "audience": { "enum": ["clinical", "patient", "shareable", "unknown"] },
+    "source_policy": { "enum": ["documents_only", "documents_plus_external", "external_blocked", "unknown"] },
+    "privacy_mode": { "enum": ["redact", "pseudonymize", "manual_review", "unknown"] },
+    "consent_status": { "enum": ["pending", "confirmed", "declined", "unknown"] },
+    "confirmed_share": { "type": "boolean" },
+    "external_consent": { "type": "boolean" },
+    "unknown_fields": { "type": "array", "items": { "type": "string" } },
+    "configured_at": { "type": "string" }
+  },
+  "additionalProperties": true
+}

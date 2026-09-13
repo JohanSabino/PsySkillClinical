@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hexaflex-clinical.local/schemas/document.schema.json",
+  "title": "Hexaflex Clinical local document",
+  "type": "object",
+  "required": ["id", "display_name", "kind", "sha256", "selected", "extractor", "legibility", "fragments"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "display_name": { "type": "string", "minLength": 1 },
+    "path": { "type": "string" },
+    "kind": { "enum": ["pdf", "docx", "markdown", "text", "json", "unknown"] },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "selected": { "type": "boolean" },
+    "extractor": { "type": "string", "minLength": 1 },
+    "legibility": { "enum": ["full", "partial", "unsupported", "unreadable"] },
+    "page_count": { "type": ["integer", "null"], "minimum": 1 },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "fragments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "text", "source_id", "legibility"],
+        "properties": {
+          "id": { "type": "string" },
+          "text": { "type": "string" },
+          "source_id": { "type": "string" },
+          "page": { "type": ["integer", "null"], "minimum": 1 },
+          "section": { "type": ["string", "null"] },
+          "legibility": { "enum": ["full", "partial", "unsupported", "unreadable"] }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

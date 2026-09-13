@@ -14,5 +14,11 @@
 | Seguridad | Negación e historial | `tests/run-tests.mjs` espera `review_required` |
 | Distribución | Runtime/estructura | `scripts/doctor.mjs` |
 | Distribución | ZIP extraído | `scripts/package.mjs` + `doctor.mjs` en extracción limpia |
+| Onboarding | Preguntas de modelo, fuentes, audiencia y privacidad | `SKILL.md`, `schemas/session.schema.json` y `examples/synthetic-case.json` |
+| Documentos | Selección local, procedencia y `unsupported` sin extractor | `scripts/ingest.mjs` + `examples/synthetic-input/` + `tests/run-tests.mjs` |
+| Fuentes | Solo documentos bloquea fuentes externas | `scripts/validate.mjs` + fixture de política en `tests/run-tests.mjs` |
+| Privacidad | Redacción/pseudonimización antes de payload | `scripts/privacy.mjs` + pruebas de PII, mapping y redactor asistido |
+| Compartición | Recibo y bloqueo cerrado | `schemas/privacy.schema.json`, `validate.mjs` y vista paciente allowlist |
+| Interactividad | Resumen compacto, filtros y `<details>` | `render.mjs`, `viewer-template.html` y pruebas HTML |
 
 La revisión profesional independiente y la publicación desde el repositorio Git real son gates de release, no se simulan con texto generado.

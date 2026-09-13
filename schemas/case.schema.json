@@ -18,6 +18,10 @@
       },
       "additionalProperties": true
     },
+    "session_config": { "$ref": "session.schema.json" },
+    "source_policy": { "enum": ["documents_only", "documents_plus_external", "external_blocked", "unknown"] },
+    "documents": { "type": "array", "items": { "$ref": "document.schema.json" } },
+    "privacy": { "$ref": "privacy.schema.json" },
     "sources": {
       "type": "array",
       "items": {
@@ -25,9 +29,13 @@
         "required": ["id", "kind", "label"],
         "properties": {
           "id": { "type": "string" },
-          "kind": { "enum": ["patient_report", "clinician_observation", "measure", "document", "inference"] },
+          "kind": { "enum": ["patient_report", "clinician_observation", "measure", "document", "inference", "external"] },
           "label": { "type": "string" },
-          "date": { "type": "string" }
+          "date": { "type": "string" },
+          "url": { "type": "string", "format": "uri" },
+          "title": { "type": "string" },
+          "fragment": { "type": "string" },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
         },
         "additionalProperties": true
       }
@@ -48,7 +56,7 @@
   },
   "$defs": {
     "status": { "enum": ["fact", "hypothesis", "shared_decision", "unknown"] },
-    "provenance": { "enum": ["patient_report", "clinician_observation", "measure", "document", "inference"] },
+    "provenance": { "enum": ["patient_report", "clinician_observation", "measure", "document", "inference", "external"] },
     "process": { "enum": ["acceptance", "defusion", "present_moment", "self_as_context", "values", "committed_action"] },
     "item": {
       "type": "object",

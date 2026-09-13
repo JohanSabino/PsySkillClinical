@@ -8,6 +8,8 @@
   "scripts": {
     "validate": "node scripts/validate.mjs examples/synthetic-case.json",
     "render": "node scripts/render.mjs examples/synthetic-case.json dist/hexaflex.html --view all --audience clinical",
+    "ingest": "node scripts/ingest.mjs examples/synthetic-input",
+    "privacy": "node scripts/privacy.mjs examples/synthetic-case.json output/model-ready.json --mode redact",
     "doctor": "node scripts/doctor.mjs",
     "package": "node scripts/package.mjs dist/hexaflex-clinical.zip",
     "test": "node tests/run-tests.mjs"

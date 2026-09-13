@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hexaflex-clinical.local/schemas/privacy.schema.json",
+  "title": "Hexaflex Clinical privacy transformation receipt",
+  "type": "object",
+  "required": ["mode", "status", "input_sha256", "payload_sha256", "rules", "counts", "raw_content_included"],
+  "properties": {
+    "mode": { "enum": ["redact", "pseudonymize", "manual_review", "unknown"] },
+    "status": { "enum": ["ready", "blocked", "review_required"] },
+    "input_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "payload_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "rules": { "type": "array", "items": { "type": "string" } },
+    "counts": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } },
+    "audience": { "enum": ["clinical", "patient", "shareable", "unknown"] },
+    "source_policy": { "enum": ["documents_only", "documents_plus_external", "external_blocked", "unknown"] },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "previous_receipt": {
+      "type": "object",
+      "required": ["compatible"],
+      "properties": {
+        "compatible": { "type": "boolean" },
+        "code": { "type": "string" },
+        "reason": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "raw_content_included": { "const": false },
+    "mapping_storage": { "enum": ["none", "ephemeral", "encrypted_local"] }
+  },
+  "additionalProperties": false
+}

@@ -4,6 +4,8 @@
   "case_ref": "caso-sintetico-01",
   "audience": "clinical",
   "map_view": "all",
+  "source_policy": "documents_only",
+  "privacy_mode": "redact",
   "checks": [
     {
       "name": "schema",
@@ -35,8 +37,8 @@
     }
   ],
   "warnings": [],
-  "case_sha256": "9663a85d1e761098856f36ab8e95ae530b18ad1d1181e456c2b49f3a5aa1f1b0",
+  "case_sha256": "ea9e33135942f1ab4d2609c3d6433a9a23c27ed1b70a9961fbce70e07684f7b0",
   "output": "C:\\Users\\psian\\Documents\\Projects\\Skills\\hexaflex-clinical\\dist\\hexaflex.html",
-  "artifact_sha256": "34b8389d133f744ad4b7f551d69d602de7e84323a298f54b170379966bf9631f",
-  "bytes": 12123
+  "artifact_sha256": "9437ff5d4f2c2abdee2117b2f1941174d4b0d1a5c02ea86493b4ab766f9ac5fd",
+  "bytes": 18905
 }

@@ -22,6 +22,8 @@ Está diseñada para trabajar dentro de agentes como **Codex, Claude Code y Open
 | **Safety gate** | Detiene la planificación rutinaria ante señales plausibles de riesgo y pide revisión humana urgente. |
 | **Privacidad local-first** | Sin cuenta, servidor, CDN, telemetría ni llamadas de red para validar o renderizar. |
 
+Al iniciar una sesión la skill pregunta por el modelo de intervención, tu rol, objetivo, documentos disponibles, política de fuentes, audiencia y modo de privacidad. No asume ACT si eliges otro marco.
+
 ## 🚀 Instalación en un agente
 
 Desde cualquier proyecto:
@@ -89,9 +91,13 @@ Para renderizar una fuente propia:
 node scripts/validate.mjs ruta/caso.json
 node scripts/render.mjs ruta/caso.json salida.html --view all --audience clinical
 node scripts/render.mjs ruta/caso.json salida-paciente.html --view all --audience patient --confirm-share
+node scripts/ingest.mjs inputs manifest.json
+node scripts/privacy.mjs ruta/caso.json ruta/model-ready.json --mode redact
 ```
 
 El caso de referencia es completamente sintético y está en [`examples/synthetic-case.json`](examples/synthetic-case.json).
+
+Para documentos, crea una carpeta `inputs/` y confirma los archivos que quieres usar. PDF y DOCX se procesan solo si existe un extractor local (`pdftotext` o `pandoc`); de lo contrario quedan como `unsupported` y la skill explica cómo aportar texto extraído sin subirlo a la red. La ingestión aplica límites configurables (5 MB, 20 archivos y 100 páginas por defecto). La política `documents_only` es la opción más restrictiva; `documents_plus_external` exige consentimiento y trazabilidad —URL, fecha, título, fragmento y hash— de cada fuente.
 
 ## 🔐 Privacidad y seguridad
 
@@ -100,6 +106,8 @@ Esta skill está acotada a profesionales cualificados y supervisión clínica. N
 Si aparece una señal plausible de suicidio, autolesión, violencia o abuso actual, el renderer **rechaza el artefacto ordinario** y devuelve una salida para evaluación humana urgente. Las negaciones, referencias históricas y frases ambiguas se conservan como advertencias; nunca se presentan como una garantía de seguridad.
 
 Antes de compartir una vista paciente, el caso debe marcar explícitamente `confirmed_share: true`. La proyección utiliza una allowlist y excluye identificadores, notas privadas, hipótesis no autorizadas y material clínico interno.
+
+La redacción local es predeterminada. Si se usa pseudonimización, el mapping es efímero o cifrado local y nunca se envía. No se debe mandar texto crudo a otro agente para “camuflarlo”: el payload se escanea dos veces y falla cerrado cuando no puede inspeccionarse.
 
 ## 🧩 Arquitectura
 
