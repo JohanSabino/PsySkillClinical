@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Mapa de flexibilidad — caso sintético</title>
+  <style>
+    :root { color-scheme: light; --ink:#17343a; --muted:#52686b; --paper:#f6f8f6; --card:#fff; --line:#d5e2df; --accent:#2f6f67; --accent-soft:#e1f0ec; --warm:#e8a45c; --hyp:#7d6298; --shadow:0 10px 30px rgba(23,52,58,.10); }
+    * { box-sizing:border-box; }
+    body { margin:0; font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--ink); background:var(--paper); }
+    header { padding:2rem max(1rem,calc((100% - 1100px)/2)); background:linear-gradient(130deg,#e7f2ef,#fff8ee); border-bottom:1px solid var(--line); }
+    main { max-width:1100px; margin:0 auto; padding:1rem; }
+    h1,h2,h3 { line-height:1.2; }
+    h1 { max-width:800px; margin:.2rem 0 .5rem; font-size:clamp(1.8rem,4vw,3rem); }
+    h2 { margin-top:2.2rem; }
+    .meta { color:var(--muted); margin:0; }
+    .notice { padding:.8rem 1rem; background:#fff6e9; border:1px solid #edc98d; border-radius:12px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1rem; box-shadow:var(--shadow); }
+    .card h3 { margin-top:0; color:var(--accent); }
+    .tag { display:inline-block; padding:.15rem .55rem; border-radius:999px; background:var(--accent-soft); color:var(--accent); font-size:.82rem; margin:.15rem .2rem .15rem 0; }
+    .tag.hyp { background:#f0eaf6; color:var(--hyp); }
+    .cycle { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:.7rem; align-items:stretch; }
+    .step { position:relative; background:#fff; border:1px solid var(--line); border-radius:12px; padding:.9rem; }
+    .step strong { display:block; color:var(--accent); }
+    .arrow { display:none; }
+    details { background:#fff; border:1px solid var(--line); border-radius:12px; padding:.7rem 1rem; }
+    summary { cursor:pointer; font-weight:650; }
+    ul { padding-left:1.25rem; }
+    code { overflow-wrap:anywhere; word-break:break-word; }
+    footer p { overflow-wrap:anywhere; word-break:break-word; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    footer { max-width:1100px; margin:2rem auto; padding:1rem; color:var(--muted); font-size:.9rem; }
+    button { border:1px solid var(--accent); color:var(--accent); background:white; border-radius:8px; padding:.45rem .7rem; cursor:pointer; }
+    button:focus-visible, summary:focus-visible { outline:3px solid #f0b45b; outline-offset:2px; }
+    @media (prefers-reduced-motion: no-preference) { .card { transition:transform .18s ease,box-shadow .18s ease; } .card:hover { transform:translateY(-2px); box-shadow:0 14px 34px rgba(23,52,58,.14); } }
+    @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration:.001ms !important; transition-duration:.001ms !important; scroll-behavior:auto !important; } }
+    @media (prefers-color-scheme: dark) { :root { color-scheme:dark; --ink:#e7f0ed; --muted:#b6c8c4; --paper:#142326; --card:#1e3033; --line:#355356; --accent:#8ed2c3; --accent-soft:#23443f; --warm:#f2bf78; --hyp:#c8a9df; --shadow:0 10px 30px rgba(0,0,0,.2); } header { background:linear-gradient(130deg,#193832,#342d20); } .step,details,button { background:var(--card); } }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="meta">Vista clínica · artefacto local · fuente validada</p>
+    <h1>Mapa de flexibilidad — caso sintético</h1>
+    <p class="meta">Borrador para revisión profesional</p>
+  </header>
+  <main>
+    <section aria-labelledby="hexaflex-title"><h2 id="hexaflex-title">Mapa Hexaflex</h2><p class="meta">Los procesos son lentes que pueden aparecer juntos; no representan diagnóstico.</p><div class="grid"><article class="card"><h3>Aceptación</h3><p>Lente interrelacionada; no es una puntuación ni una etapa obligatoria.</p></article><article class="card"><h3>Defusión</h3><p>Lente interrelacionada; no es una puntuación ni una etapa obligatoria.</p></article><article class="card"><h3>Momento presente</h3><p>Lente interrelacionada; no es una puntuación ni una etapa obligatoria.</p></article><article class="card"><h3>Yo-como-contexto</h3><p>Lente interrelacionada; no es una puntuación ni una etapa obligatoria.</p></article><article class="card"><h3>Valores</h3><p>Lente interrelacionada; no es una puntuación ni una etapa obligatoria.</p></article><article class="card"><h3>Acción comprometida</h3><p>Lente interrelacionada; no es una puntuación ni una etapa obligatoria.</p></article></div><h3>Patrones y direcciones</h3><div class="grid"><article class="card"><h3>Anticipación y retirada de conversaciones difíciles</h3><p><span class="tag">Defusión</span><span class="tag">Aceptación</span><span class="tag">Momento presente</span><span class="tag">Acción comprometida</span></p><details><summary>Ver elementos de formulación</summary><p><strong>Contexto:</strong></p><ul class=""><li>Conversaciones de trabajo con incertidumbre</li></ul><p><strong>Conductas:</strong></p><ul class=""><li>Posponer el diálogo y revisar mensajes repetidamente</li></ul><p><strong>Hipótesis funcional:</strong> <span class="tag hyp">revisable</span> Podría reducir la incomodidad inmediata y mantener abierta la posibilidad de evitar una evaluación negativa</p><p><strong>Efectos a corto plazo:</strong></p><ul class=""><li>Alivio breve y sensación de control</li></ul><p><strong>Efectos a largo plazo:</strong></p><ul class=""><li>Menos oportunidades de comunicación directa; efecto aún por explorar</li></ul></details></article><article class="card"><h3>Momento de desconexión aún no comprendido</h3><p><span class="tag">Yo-como-contexto</span><span class="tag">Momento presente</span></p><details><summary>Ver elementos de formulación</summary><p><strong>Contexto:</strong></p><ul class=""><li>Situaciones específicas todavía no identificadas</li></ul><p><strong>Conductas:</strong></p><p class="meta">Sin información confirmada.</p><p><strong>Hipótesis funcional:</strong> <span class="tag hyp">revisable</span> Aún no hay evidencia suficiente para formular una función</p><p><strong>Efectos a corto plazo:</strong></p><p class="meta">Sin información confirmada.</p><p><strong>Efectos a largo plazo:</strong></p><p class="meta">Sin información confirmada.</p></details></article></div></section><section aria-labelledby="cycle-title"><h2 id="cycle-title">Ciclo funcional</h2><p class="meta">Las conexiones inferidas se muestran como hipótesis revisables, no como causalidad comprobada.</p><div class="grid"><article class="card"><h3>Anticipación y retirada de conversaciones difíciles</h3><div class="cycle"><div class="step"><strong>Contexto</strong><ul class=""><li>Conversaciones de trabajo con incertidumbre</li></ul></div><div class="step"><strong>Experiencia / conducta</strong><ul class=""><li>Pensamientos de que todo saldrá mal</li><li>Tensión corporal y urgencia por resolver</li><li>Posponer el diálogo y revisar mensajes repetidamente</li></ul></div><div class="step"><strong>Efectos</strong><p><span class="tag">corto plazo</span></p><ul class=""><li>Alivio breve y sensación de control</li></ul><p><span class="tag hyp">largo plazo · hipótesis</span></p><ul class=""><li>Menos oportunidades de comunicación directa; efecto aún por explorar</li></ul></div><div class="step"><strong>Dirección valiosa</strong><ul class=""><li>Comunicación honesta y cuidado de relaciones</li></ul></div></div><p><span class="tag hyp">hipótesis funcional revisable</span> Podría reducir la incomodidad inmediata y mantener abierta la posibilidad de evitar una evaluación negativa</p></article><article class="card"><h3>Momento de desconexión aún no comprendido</h3><div class="cycle"><div class="step"><strong>Contexto</strong><ul class=""><li>Situaciones específicas todavía no identificadas</li></ul></div><div class="step"><strong>Experiencia / conducta</strong><p class="meta">Sin información confirmada.</p></div><div class="step"><strong>Efectos</strong><p><span class="tag">corto plazo</span></p><p class="meta">Sin información confirmada.</p><p><span class="tag hyp">largo plazo · hipótesis</span></p><p class="meta">Sin información confirmada.</p></div><div class="step"><strong>Dirección valiosa</strong><p class="meta">Sin información confirmada.</p></div></div><p><span class="tag hyp">hipótesis funcional revisable</span> Aún no hay evidencia suficiente para formular una función</p></article></div></section><section aria-labelledby="values-title"><h2 id="values-title">Brújula valores–acciones</h2><div class="grid"><article class="card"><h3>Direcciones elegidas</h3><ul class=""><li>Comunicación honesta y cuidado de relaciones</li><li>Otra dirección valiosa por explorar</li></ul></article><article class="card"><h3>Preguntas para conversar</h3><ul class=""><li>¿Qué señales tempranas ayudan a notar la retirada sin juzgarla?</li><li>¿Qué condiciones harían una conversación suficientemente segura y pequeña para practicar?</li></ul></article></div><h3>Hoja de ruta de sesiones</h3><div class="grid"><article class="card"><h3>Observar el patrón y elegir una dirección</h3><p>Construir un mapa compartido del patrón y acordar un paso pequeño</p><p><span class="tag">Defusión</span><span class="tag">Momento presente</span><span class="tag">Valores</span></p><details><summary>Práctica y seguimiento</summary><ul class=""><li>Registrar una ocasión de notar la historia y una elección posible, sin exigencia de realizar la conversación</li></ul><p><strong>Seguimiento:</strong></p><ul class=""><li>Observación breve elegida por la persona</li><li>Qué facilitó o dificultó la práctica</li></ul><p><strong>Adaptación:</strong> Si aumenta la sobrecarga o no encaja con la dirección elegida, revisar contexto, alianza y alternativa antes de repetir</p></details></article></div></section><section aria-labelledby="roadmap-title"><h2 id="roadmap-title">Sesiones</h2><div class="grid"><article class="card"><p class="meta">Sesión 1</p><h3>Observar el patrón y elegir una dirección</h3><p>Construir un mapa compartido del patrón y acordar un paso pequeño</p><p><span class="tag">Defusión</span><span class="tag">Momento presente</span><span class="tag">Valores</span></p><p><strong>Agenda:</strong></p><ul class=""><li>Revisar qué fue útil del mapa</li><li>Explorar señales y función como hipótesis</li><li>Elegir una acción pequeña</li></ul><p><strong>Consentimiento:</strong> Confirmar comprensión, elección y posibilidad de pausar o cambiar el ejercicio</p><p><strong>Criterio de adaptación:</strong> Si aumenta la sobrecarga o no encaja con la dirección elegida, revisar contexto, alianza y alternativa antes de repetir</p></article></div></section>
+  </main>
+  <footer>
+    <p>Este material apoya una conversación clínica y no constituye diagnóstico, prescripción ni evaluación de riesgo. Revisar antes de compartir.</p>
+    <p>Fuente: <code>caso-sintetico-01</code> · esquema <code>1.0</code> · hash de fuente <code>9663a85d1e761098856f36ab8e95ae530b18ad1d1181e456c2b49f3a5aa1f1b0</code></p>
+  </footer>
+  <script type="application/json" id="validation-receipt">{"valid":true,"schema_version":"1.0","case_ref":"caso-sintetico-01","audience":"clinical","map_view":"all","checks":[{"name":"schema","passed":true},{"name":"provenance","passed":true},{"name":"safety","passed":true},{"name":"privacy","passed":true},{"name":"audience","passed":true},{"name":"warnings","passed":true},{"name":"delivery","passed":true}],"warnings":[],"case_sha256":"9663a85d1e761098856f36ab8e95ae530b18ad1d1181e456c2b49f3a5aa1f1b0"}</script>
+  <script>
+    (() => { document.querySelectorAll('details').forEach((detail) => { detail.addEventListener('toggle', () => { detail.setAttribute('aria-live', 'polite'); }); }); })();
+  </script>
+</body>
+</html>

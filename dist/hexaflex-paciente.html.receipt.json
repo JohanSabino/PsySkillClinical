@@ -1,0 +1,42 @@
+{
+  "valid": true,
+  "schema_version": "1.0",
+  "case_ref": "caso-sintetico-01",
+  "audience": "patient",
+  "map_view": "all",
+  "checks": [
+    {
+      "name": "schema",
+      "passed": true
+    },
+    {
+      "name": "provenance",
+      "passed": true
+    },
+    {
+      "name": "safety",
+      "passed": true
+    },
+    {
+      "name": "privacy",
+      "passed": true
+    },
+    {
+      "name": "audience",
+      "passed": true
+    },
+    {
+      "name": "warnings",
+      "passed": true
+    },
+    {
+      "name": "delivery",
+      "passed": true
+    }
+  ],
+  "warnings": [],
+  "case_sha256": "9663a85d1e761098856f36ab8e95ae530b18ad1d1181e456c2b49f3a5aa1f1b0",
+  "output": "C:\\Users\\psian\\Documents\\Projects\\Skills\\hexaflex-clinical\\dist\\hexaflex-paciente.html",
+  "artifact_sha256": "c255386e24aae9a200722ecbc7bbf5ca807fb795214970bf132d64dc7d7939b0",
+  "bytes": 8612
+}

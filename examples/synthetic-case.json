@@ -1,0 +1,104 @@
+{
+  "schema_version": "1.0",
+  "meta": {
+    "title": "Mapa de flexibilidad — caso sintético",
+    "locale": "es",
+    "audience": "clinical",
+    "case_ref": "caso-sintetico-01",
+    "created_at": "2026-09-13"
+  },
+  "sources": [
+    { "id": "src-p1", "kind": "patient_report", "label": "Relato aportado en sesión inicial" },
+    { "id": "src-o1", "kind": "clinician_observation", "label": "Observación colaborativa del patrón" },
+    { "id": "src-m1", "kind": "measure", "label": "Registro breve elegido para seguimiento" }
+  ],
+  "safety": {
+    "risk_screen": "no_current_signal",
+    "protocol_note": "Ejemplo sintético; aplicar siempre el protocolo local y evaluación humana."
+  },
+  "formulation": {
+    "patterns": [
+      {
+        "id": "pat-anticipacion",
+        "title": "Anticipación y retirada de conversaciones difíciles",
+        "processes": ["defusion", "acceptance", "present_moment", "committed_action"],
+        "context": [
+          { "id": "ctx-1", "text": "Conversaciones de trabajo con incertidumbre", "provenance": "patient_report", "epistemic_status": "fact" }
+        ],
+        "internal_experiences": [
+          { "id": "exp-1", "text": "Pensamientos de que todo saldrá mal", "provenance": "patient_report", "epistemic_status": "fact" },
+          { "id": "exp-2", "text": "Tensión corporal y urgencia por resolver", "provenance": "patient_report", "epistemic_status": "fact" }
+        ],
+        "behaviors": [
+          { "id": "beh-1", "text": "Posponer el diálogo y revisar mensajes repetidamente", "provenance": "patient_report", "epistemic_status": "fact" }
+        ],
+        "function_hypothesis": {
+          "id": "fun-1",
+          "text": "Podría reducir la incomodidad inmediata y mantener abierta la posibilidad de evitar una evaluación negativa",
+          "provenance": "inference",
+          "epistemic_status": "hypothesis"
+        },
+        "short_term_effects": [
+          { "id": "eff-s1", "text": "Alivio breve y sensación de control", "provenance": "patient_report", "epistemic_status": "fact" }
+        ],
+        "long_term_effects": [
+          { "id": "eff-l1", "text": "Menos oportunidades de comunicación directa; efecto aún por explorar", "provenance": "inference", "epistemic_status": "hypothesis" }
+        ],
+        "value_directions": [
+          { "id": "val-1", "text": "Comunicación honesta y cuidado de relaciones", "provenance": "patient_report", "epistemic_status": "shared_decision", "confirmed_by_patient": true }
+        ],
+        "relations": [
+          { "from": "ctx-1", "to": "exp-1", "kind": "observation", "label": "aparece en este contexto", "epistemic_status": "fact" },
+          { "from": "fun-1", "to": "beh-1", "kind": "hypothesis", "label": "hipótesis funcional revisable", "epistemic_status": "hypothesis" },
+          { "from": "val-1", "to": "beh-1", "kind": "objective", "label": "dirección para explorar", "epistemic_status": "shared_decision" }
+        ]
+      },
+      {
+        "id": "pat-desconocido",
+        "title": "Momento de desconexión aún no comprendido",
+        "processes": ["self_as_context", "present_moment"],
+        "context": [
+          { "id": "ctx-2", "text": "Situaciones específicas todavía no identificadas", "provenance": "inference", "epistemic_status": "unknown" }
+        ],
+        "internal_experiences": [],
+        "behaviors": [],
+        "function_hypothesis": { "id": "fun-2", "text": "Aún no hay evidencia suficiente para formular una función", "provenance": "inference", "epistemic_status": "unknown" },
+        "short_term_effects": [],
+        "long_term_effects": [],
+        "value_directions": [],
+        "relations": []
+      }
+    ],
+    "values": [
+      { "id": "value-1", "text": "Comunicación honesta y cuidado de relaciones", "provenance": "patient_report", "epistemic_status": "shared_decision", "confirmed_by_patient": true },
+      { "id": "value-2", "text": "Otra dirección valiosa por explorar", "provenance": "inference", "epistemic_status": "unknown" }
+    ],
+    "open_questions": [
+      "¿Qué señales tempranas ayudan a notar la retirada sin juzgarla?",
+      "¿Qué condiciones harían una conversación suficientemente segura y pequeña para practicar?"
+    ]
+  },
+  "sessions": [
+    {
+      "id": "ses-01",
+      "title": "Observar el patrón y elegir una dirección",
+      "purpose": "Construir un mapa compartido del patrón y acordar un paso pequeño",
+      "hypothesis_ids": ["pat-anticipacion"],
+      "relevant_processes": ["defusion", "present_moment", "values"],
+      "agenda": ["Revisar qué fue útil del mapa", "Explorar señales y función como hipótesis", "Elegir una acción pequeña"],
+      "intervention_candidates": [
+        { "id": "int-01", "label": "Nombrar la historia mental", "purpose": "Observar pensamientos sin tener que resolverlos de inmediato", "status": "suggested", "alternative": "Describir la situación por escrito", "conditions": ["Preguntar si tiene sentido antes de practicar"] },
+        { "id": "int-02", "label": "Paso pequeño de comunicación", "purpose": "Ensayar acción congruente con comunicación honesta", "status": "shared_decision", "alternative": "Preparar una frase y posponer la conversación hasta contar con apoyo", "conditions": ["Acordar factibilidad y seguridad contextual"] }
+      ],
+      "consent_check": "Confirmar comprensión, elección y posibilidad de pausar o cambiar el ejercicio",
+      "between_session_practice": ["Registrar una ocasión de notar la historia y una elección posible, sin exigencia de realizar la conversación"],
+      "follow_up": ["Observación breve elegida por la persona", "Qué facilitó o dificultó la práctica"],
+      "adaptation_criterion": "Si aumenta la sobrecarga o no encaja con la dirección elegida, revisar contexto, alianza y alternativa antes de repetir",
+      "epistemic_status": "shared_decision"
+    }
+  ],
+  "revisions": [
+    { "id": "rev-1", "sequence": 1, "change": "Se añadió una hipótesis funcional inicial", "evidence": ["Relato aportado en sesión inicial"], "status": "new" },
+    { "id": "rev-2", "sequence": 2, "change": "Se mantiene abierta la situación de desconexión por falta de contexto", "evidence": ["Información no disponible todavía"], "status": "weakened" }
+  ]
+}

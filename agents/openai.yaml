@@ -1,0 +1,7 @@
+interface:
+  display_name: "Hexaflex Clinical"
+  short_description: "Formulación ACT y mapas clínicos seguros"
+  brand_color: "#2F6F67"
+  default_prompt: "Usa $hexaflex-clinical para organizar una formulación ACT revisable y proponer un mapa de sesión seguro."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hexaflex-clinical.local/schemas/case.schema.json",
+  "title": "Hexaflex Clinical case",
+  "type": "object",
+  "required": ["schema_version", "meta", "sources", "formulation", "sessions", "revisions"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "meta": {
+      "type": "object",
+      "required": ["title", "locale", "audience", "case_ref"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "locale": { "enum": ["es", "en"] },
+        "audience": { "enum": ["clinical", "patient", "shareable"] },
+        "case_ref": { "type": "string", "pattern": "^[A-Za-z0-9._-]+$" },
+        "created_at": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "label"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "enum": ["patient_report", "clinician_observation", "measure", "document", "inference"] },
+          "label": { "type": "string" },
+          "date": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "safety": { "$ref": "#/$defs/safety" },
+    "formulation": {
+      "type": "object",
+      "required": ["patterns", "values", "open_questions"],
+      "properties": {
+        "patterns": { "type": "array", "items": { "$ref": "#/$defs/pattern" } },
+        "values": { "type": "array", "items": { "$ref": "#/$defs/item" } },
+        "open_questions": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "sessions": { "type": "array", "items": { "$ref": "#/$defs/session" } },
+    "revisions": { "type": "array", "items": { "$ref": "#/$defs/revision" } }
+  },
+  "$defs": {
+    "status": { "enum": ["fact", "hypothesis", "shared_decision", "unknown"] },
+    "provenance": { "enum": ["patient_report", "clinician_observation", "measure", "document", "inference"] },
+    "process": { "enum": ["acceptance", "defusion", "present_moment", "self_as_context", "values", "committed_action"] },
+    "item": {
+      "type": "object",
+      "required": ["id", "text", "provenance", "epistemic_status"],
+      "properties": {
+        "id": { "type": "string" },
+        "text": { "type": "string", "minLength": 1 },
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "epistemic_status": { "$ref": "#/$defs/status" },
+        "private": { "type": "boolean" },
+        "confirmed_by_patient": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "pattern": {
+      "type": "object",
+      "required": ["id", "title", "processes", "context", "internal_experiences", "behaviors", "function_hypothesis", "short_term_effects", "long_term_effects", "value_directions"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "processes": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/process" } },
+        "context": { "type": "array", "items": { "$ref": "#/$defs/item" } },
+        "internal_experiences": { "type": "array", "items": { "$ref": "#/$defs/item" } },
+        "behaviors": { "type": "array", "items": { "$ref": "#/$defs/item" } },
+        "function_hypothesis": { "$ref": "#/$defs/item" },
+        "short_term_effects": { "type": "array", "items": { "$ref": "#/$defs/item" } },
+        "long_term_effects": { "type": "array", "items": { "$ref": "#/$defs/item" } },
+        "value_directions": { "type": "array", "items": { "$ref": "#/$defs/item" } },
+        "relations": { "type": "array", "items": { "$ref": "#/$defs/relation" } }
+      },
+      "additionalProperties": true
+    },
+    "relation": {
+      "type": "object",
+      "required": ["from", "to", "kind", "epistemic_status"],
+      "properties": {
+        "from": { "type": "string" },
+        "to": { "type": "string" },
+        "kind": { "enum": ["observation", "hypothesis", "objective", "barrier", "resource", "intervention", "agreed_action"] },
+        "label": { "type": "string" },
+        "epistemic_status": { "$ref": "#/$defs/status" }
+      }
+    },
+    "session": {
+      "type": "object",
+      "required": ["id", "title", "purpose", "relevant_processes", "agenda", "intervention_candidates", "consent_check", "between_session_practice", "follow_up", "adaptation_criterion"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "purpose": { "type": "string" },
+        "hypothesis_ids": { "type": "array", "items": { "type": "string" } },
+        "relevant_processes": { "type": "array", "items": { "$ref": "#/$defs/process" } },
+        "agenda": { "type": "array", "items": { "type": "string" } },
+        "intervention_candidates": { "type": "array", "items": { "$ref": "#/$defs/intervention" } },
+        "consent_check": { "type": "string" },
+        "between_session_practice": { "type": "array", "items": { "type": "string" } },
+        "follow_up": { "type": "array", "items": { "type": "string" } },
+        "adaptation_criterion": { "type": "string" },
+        "epistemic_status": { "$ref": "#/$defs/status" }
+      },
+      "additionalProperties": true
+    },
+    "intervention": {
+      "type": "object",
+      "required": ["id", "label", "purpose", "status"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "purpose": { "type": "string" },
+        "status": { "enum": ["suggested", "shared_decision", "declined", "unknown"] },
+        "alternative": { "type": "string" },
+        "conditions": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "revision": {
+      "type": "object",
+      "required": ["id", "sequence", "change", "evidence", "status"],
+      "properties": {
+        "id": { "type": "string" },
+        "sequence": { "type": "integer", "minimum": 1 },
+        "change": { "type": "string" },
+        "evidence": { "type": "array", "items": { "type": "string" } },
+        "status": { "enum": ["confirmed", "weakened", "discarded", "new"] }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "properties": {
+        "risk_screen": { "enum": ["not_assessed", "no_current_signal", "review_required", "urgent_human_review"] },
+        "protocol_note": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  }
+}

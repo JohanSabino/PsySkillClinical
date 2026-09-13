@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="{{LANG}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>{{TITLE}}</title>
+  <style>
+    :root { color-scheme: light; --ink:#17343a; --muted:#52686b; --paper:#f6f8f6; --card:#fff; --line:#d5e2df; --accent:#2f6f67; --accent-soft:#e1f0ec; --warm:#e8a45c; --hyp:#7d6298; --shadow:0 10px 30px rgba(23,52,58,.10); }
+    * { box-sizing:border-box; }
+    body { margin:0; font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--ink); background:var(--paper); }
+    header { padding:2rem max(1rem,calc((100% - 1100px)/2)); background:linear-gradient(130deg,#e7f2ef,#fff8ee); border-bottom:1px solid var(--line); }
+    main { max-width:1100px; margin:0 auto; padding:1rem; }
+    h1,h2,h3 { line-height:1.2; }
+    h1 { max-width:800px; margin:.2rem 0 .5rem; font-size:clamp(1.8rem,4vw,3rem); }
+    h2 { margin-top:2.2rem; }
+    .meta { color:var(--muted); margin:0; }
+    .notice { padding:.8rem 1rem; background:#fff6e9; border:1px solid #edc98d; border-radius:12px; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1rem; box-shadow:var(--shadow); }
+    .card h3 { margin-top:0; color:var(--accent); }
+    .tag { display:inline-block; padding:.15rem .55rem; border-radius:999px; background:var(--accent-soft); color:var(--accent); font-size:.82rem; margin:.15rem .2rem .15rem 0; }
+    .tag.hyp { background:#f0eaf6; color:var(--hyp); }
+    .cycle { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:.7rem; align-items:stretch; }
+    .step { position:relative; background:#fff; border:1px solid var(--line); border-radius:12px; padding:.9rem; }
+    .step strong { display:block; color:var(--accent); }
+    .arrow { display:none; }
+    details { background:#fff; border:1px solid var(--line); border-radius:12px; padding:.7rem 1rem; }
+    summary { cursor:pointer; font-weight:650; }
+    ul { padding-left:1.25rem; }
+    code { overflow-wrap:anywhere; word-break:break-word; }
+    footer p { overflow-wrap:anywhere; word-break:break-word; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    footer { max-width:1100px; margin:2rem auto; padding:1rem; color:var(--muted); font-size:.9rem; }
+    button { border:1px solid var(--accent); color:var(--accent); background:white; border-radius:8px; padding:.45rem .7rem; cursor:pointer; }
+    button:focus-visible, summary:focus-visible { outline:3px solid #f0b45b; outline-offset:2px; }
+    @media (prefers-reduced-motion: no-preference) { .card { transition:transform .18s ease,box-shadow .18s ease; } .card:hover { transform:translateY(-2px); box-shadow:0 14px 34px rgba(23,52,58,.14); } }
+    @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration:.001ms !important; transition-duration:.001ms !important; scroll-behavior:auto !important; } }
+    @media (prefers-color-scheme: dark) { :root { color-scheme:dark; --ink:#e7f0ed; --muted:#b6c8c4; --paper:#142326; --card:#1e3033; --line:#355356; --accent:#8ed2c3; --accent-soft:#23443f; --warm:#f2bf78; --hyp:#c8a9df; --shadow:0 10px 30px rgba(0,0,0,.2); } header { background:linear-gradient(130deg,#193832,#342d20); } .step,details,button { background:var(--card); } }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="meta">{{AUDIENCE_LABEL}} · artefacto local · fuente validada</p>
+    <h1>{{TITLE}}</h1>
+    <p class="meta">{{SUBTITLE}}</p>
+  </header>
+  <main>
+    {{BODY}}
+  </main>
+  <footer>
+    <p>Este material apoya una conversación clínica y no constituye diagnóstico, prescripción ni evaluación de riesgo. Revisar antes de compartir.</p>
+    <p>Fuente: <code>{{CASE_REF}}</code> · esquema <code>{{SCHEMA_VERSION}}</code> · hash de fuente <code>{{CASE_HASH}}</code></p>
+  </footer>
+  <script type="application/json" id="validation-receipt">{{RECEIPT}}</script>
+  <script>
+    (() => { document.querySelectorAll('details').forEach((detail) => { detail.addEventListener('toggle', () => { detail.setAttribute('aria-live', 'polite'); }); }); })();
+  </script>
+</body>
+</html>

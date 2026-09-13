@@ -1,0 +1,15 @@
+{
+  "name": "hexaflex-clinical",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ACT/Hexaflex clinical formulation and safe visual artifacts skill",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "validate": "node scripts/validate.mjs examples/synthetic-case.json",
+    "render": "node scripts/render.mjs examples/synthetic-case.json dist/hexaflex.html --view all --audience clinical",
+    "doctor": "node scripts/doctor.mjs",
+    "package": "node scripts/package.mjs dist/hexaflex-clinical.zip",
+    "test": "node tests/run-tests.mjs"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hexaflex-clinical.local/schemas/visual.schema.json",
+  "title": "Hexaflex Clinical visual source",
+  "type": "object",
+  "required": ["schema_version", "source_case_ref", "map_type", "audience", "nodes", "relations", "views"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "source_case_ref": { "type": "string" },
+    "map_type": { "enum": ["hexaflex", "functional_cycle", "values_actions", "session_roadmap", "all"] },
+    "audience": { "enum": ["clinical", "patient", "shareable"] },
+    "confirmed_share": { "type": "boolean" },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "kind", "source_id"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "kind": { "enum": ["process", "pattern", "context", "experience", "behavior", "effect", "value", "resource", "barrier", "session", "intervention", "action", "question"] },
+          "source_id": { "type": "string" },
+          "private": { "type": "boolean" }
+        }
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "kind", "label"],
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "kind": { "enum": ["observation", "hypothesis", "objective", "barrier", "resource", "intervention", "agreed_action"] },
+          "label": { "type": "string" }
+        }
+      }
+    },
+    "views": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "field_allowlist"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "field_allowlist": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "audience": { "const": "shareable" } } },
+      "then": { "required": ["confirmed_share"], "properties": { "confirmed_share": { "const": true } } }
+    }
+  ]
+}
