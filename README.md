@@ -64,6 +64,71 @@ flowchart LR
 
 El flujo conserva la diferencia entre reporte, observación, medida, documento, inferencia y desconocido. Una hipótesis no se convierte en hecho por repetirse; las decisiones compartidas quedan marcadas como tales.
 
+## 🧪 Por qué el Hexaflex representa un cambio de paradigma
+
+En este README usamos **“revolución” como una afirmación conceptual**, no como una promesa de superioridad universal. El Hexaflex cambia la unidad de análisis: en lugar de preguntar solamente *“¿qué diagnóstico tiene la persona y qué protocolo le corresponde?”*, invita a estudiar **qué procesos contextuales mantienen el sufrimiento, en qué situaciones aparecen y qué conducta valiosa puede construirse a continuación**. Esta lógica es coherente con el giro hacia terapias basadas en procesos, funcionales e idiográficas (Hayes, Hofmann y Ciarrochi, 2020; Moskow et al., 2023).
+
+Los seis procesos no son etapas lineales ni casillas que haya que “completar”. Forman un mapa clínico interrelacionado: se seleccionan y se miden según la persona, su contexto y el objetivo acordado.
+
+| Proceso | Pregunta clínica breve |
+| --- | --- |
+| **Aceptación** | ¿Puede abrirse espacio a la experiencia difícil sin convertirla en una lucha obligatoria? |
+| **Defusión** | ¿Puede observar pensamientos como eventos, en vez de obedecerlos automáticamente? |
+| **Contacto con el presente** | ¿Qué información útil está disponible aquí y ahora? |
+| **Yo-como-contexto** | ¿Puede notar que es más amplio que cualquier historia, rol o diagnóstico? |
+| **Valores** | ¿Qué cualidad de vida quiere encarnar, aunque no sea una meta que se “termine”? |
+| **Acción comprometida** | ¿Cuál es el siguiente paso pequeño, observable y revisable? |
+
+### Del paquete diagnóstico al proceso que se puede modificar
+
+```mermaid
+flowchart LR
+    A["Síntoma o diagnóstico"] --> B["Contexto y función<br/>¿qué lo mantiene?"]
+    B --> C["Procesos Hexaflex<br/>seis palancas interrelacionadas"]
+    C --> D["Hipótesis idiográfica<br/>provisional y trazable"]
+    D --> E["Intervención modular<br/>experiencia + práctica"]
+    E --> F["Seguimiento repetido<br/>¿qué cambió para esta persona?"]
+    F -. "actualiza" .-> B
+```
+
+La propuesta es revolucionaria por su **utilidad organizadora**: permite conectar evidencia, contexto y decisiones compartidas sin convertir el diagrama en un diagnóstico automático. La flexibilidad psicológica se ha descrito como una capacidad dinámica para adaptarse a demandas situacionales y actuar de forma congruente con valores (Kashdan y Rottenberg, 2010).
+
+### Qué respalda la evidencia (y qué no)
+
+El siguiente mapa resume resultados de revisiones y metaanálisis. Las cifras pertenecen a poblaciones, comparadores y medidas diferentes; **no deben sumarse ni leerse como una clasificación entre estudios**.
+
+```mermaid
+flowchart TB
+    L["Levin et al., 2012<br/>66 estudios experimentales de componentes"] --> L2["Efectos positivos para aceptación, defusión, presente, valores y combinaciones mindfulness-valores"]
+    A["A-Tjak et al., 2015<br/>39 ECA · 1.821 participantes"] --> A2["ACT > lista de espera / placebo / TAU<br/>vs tratamientos establecidos: sin diferencia significativa (p = .140)"]
+    H["Hsu et al., 2023<br/>20 estudios · 56 tamaños · n = 1.750"] --> H2["Flexibilidad/inflexibilidad: g = 0,38<br/>IC 95% [0,20; 0,56]"]
+    M["Macri y Rogge, 2024<br/>revisión sistemática y metaanalítica"] --> M2["Mejoras en flexibilidad y malestar<br/>recomienda medir mecanismos repetidamente"]
+    L2 --> R["Lectura clínica responsable<br/>formular → probar → medir → revisar"]
+    A2 --> R
+    H2 --> R
+    M2 --> R
+```
+
+| Hallazgo | Lectura útil para la skill | Límite que conservamos |
+| --- | --- | --- |
+| Componentes aislados muestran efectos experimentales positivos (Levin et al., 2012). | Se pueden proponer ejercicios experienciales dirigidos a un proceso. | Un efecto de laboratorio no prueba que un ejercicio sea el mecanismo causal en cada caso. |
+| ACT supera controles pasivos o TAU en el metaanálisis de A-Tjak et al. (2015). | Es razonable considerar ACT una opción basada en evidencia. | No fue superior a tratamientos establecidos; no se presenta como “la mejor” terapia. |
+| En universitarios, Hsu et al. (2023) encontró `g = 0,38`. | La flexibilidad/inflexibilidad es un resultado medible y sensible al cambio. | La muestra fue de estudiantes; no se generaliza automáticamente a toda la práctica clínica. |
+| Macri y Rogge (2024) vinculan cambios en flexibilidad e inflexibilidad con cambios en malestar. | Conviene medir procesos y resultados varias veces, no solo al final. | Asociación o mediación estadística no equivale por sí sola a causalidad individual. |
+
+> **Regla de oro:** el Hexaflex es un mapa de hipótesis, no un test, un algoritmo diagnóstico ni una garantía de resultado. McLoughlin y Roche (2023) señalan limitaciones importantes en la medición de los procesos y en la evidencia de que los seis componentes formen siempre un único mecanismo global. Por eso esta skill conserva desconocidos, exige revisión profesional y evita puntuar a la persona como “más” o “menos” Hexaflex.
+
+### Referencias científicas (APA 7)
+
+- A-Tjak, J. G. L., Davis, M. L., Morina, N., Powers, M. B., Smits, J. A. J., & Emmelkamp, P. M. G. (2015). A meta-analysis of the efficacy of acceptance and commitment therapy for clinically relevant mental and physical health problems. *Psychotherapy and Psychosomatics, 84*(1), 30–36. https://doi.org/10.1159/000365764
+- Hayes, S. C., Hofmann, S. G., & Ciarrochi, J. (2020). A process-based approach to psychological diagnosis and treatment: The conceptual and treatment utility of an extended evolutionary meta model. *Clinical Psychology Review, 82*, 101908. https://doi.org/10.1016/j.cpr.2020.101908
+- Hsu, T., Adamowicz, J. L., & Thomas, E. B. K. (2023). The effect of acceptance and commitment therapy on the psychological flexibility and inflexibility of undergraduate students: A systematic review and three-level meta-analysis. *Journal of Contextual Behavioral Science, 30*, 169–180. https://doi.org/10.1016/j.jcbs.2023.10.006
+- Kashdan, T. B., & Rottenberg, J. (2010). Psychological flexibility as a fundamental aspect of health. *Clinical Psychology Review, 30*(7), 865–878. https://doi.org/10.1016/j.cpr.2010.03.001
+- Levin, M. E., Hildebrandt, M. J., Lillis, J., & Hayes, S. C. (2012). The impact of treatment components suggested by the psychological flexibility model: A meta-analysis of laboratory-based component studies. *Behavior Therapy, 43*(4), 741–756. https://doi.org/10.1016/j.beth.2012.05.003
+- Macri, J. A., & Rogge, R. D. (2024). Examining domains of psychological flexibility and inflexibility as treatment mechanisms in acceptance and commitment therapy: A comprehensive systematic and meta-analytic review. *Clinical Psychology Review, 110*, 102432. https://doi.org/10.1016/j.cpr.2024.102432
+- McLoughlin, S., & Roche, B. T. (2023). ACT: A process-based therapy in search of a process. *Behavior Therapy, 54*(6), 939–955. https://doi.org/10.1016/j.beth.2022.07.010
+- Moskow, D. M., Ong, C. W., Hayes, S. C., & Hofmann, S. G. (2023). Process-based therapy: A personalized approach to treatment. *Journal of Experimental Psychopathology, 14*(1), 1–8. https://doi.org/10.1177/20438087231152848
+
 ## 🎨 Artefactos HTML incluidos
 
 - [Mapa clínico de ejemplo](dist/hexaflex.html)
