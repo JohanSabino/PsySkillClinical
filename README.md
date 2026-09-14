@@ -1,23 +1,23 @@
-# Hexaflex Clinical
+# Clinical Practice Maps
 
-> **Una skill visual y segura para pensar, conversar y planificar desde ACT.**
+> **Una skill visual y segura para pensar, conversar y planificar en psicología clínica.**
 
 [![CI](https://github.com/JohanSabino/PsySkillClinical/actions/workflows/ci.yml/badge.svg)](https://github.com/JohanSabino/PsySkillClinical/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-6b7280.svg)](LICENSE)
 [![Node.js 18+](https://img.shields.io/badge/Node.js-18%2B-3c873a.svg)](https://nodejs.org/)
 [![Local-first](https://img.shields.io/badge/privacy-local--first-2563eb.svg)](#privacidad-y-seguridad)
 
-Hexaflex Clinical convierte información clínica **sintética o autorizada** en formulaciones funcionales, propuestas colaborativas de sesión y mapas HTML que se pueden revisar con un profesional o utilizar como psicoeducación.
+Clinical Practice Maps convierte información clínica **sintética o autorizada** en formulaciones funcionales, propuestas colaborativas de sesión y mapas HTML que se pueden revisar con un profesional o utilizar como psicoeducación. El profesional elige el modelo de intervención (ACT/Hexaflex, CBT, DBT u otro); la herramienta no impone una teoría clínica.
 
-Está diseñada para trabajar dentro de agentes como **Codex, Claude Code y OpenCode**. El paquete no crea diagnósticos ni reemplaza el juicio clínico: ayuda a hacer visibles las hipótesis, los procesos ACT, los valores y los siguientes pasos conversables.
+Está diseñada para trabajar dentro de agentes como **Codex, Claude Code y OpenCode**. El paquete no crea diagnósticos ni reemplaza el juicio clínico: ayuda a hacer visibles las hipótesis, los constructos del modelo elegido y los siguientes pasos conversables.
 
 ## ✨ Qué aporta
 
 | Capacidad | Resultado |
 | --- | --- |
-| **Formulación Hexaflex** | Conecta contexto, experiencia, conducta, función e hipótesis revisables en los seis procesos ACT. |
+| **Formulación guiada por el modelo** | Conecta contexto, experiencia, conducta, función e hipótesis revisables según el marco que el profesional haya seleccionado. |
 | **Planificación de sesiones** | Propone focos, preguntas y experimentos experienciales sin imponer una secuencia ni una duración fija. |
-| **Cuatro mapas visuales** | Hexaflex contextual, ciclo funcional, brújula valores–acciones y hoja de ruta de sesiones. |
+| **Mapas visuales compactos** | Ciclo funcional, objetivos/acciones y hoja de ruta; el radial Hexaflex aparece solo si se elige ACT/Hexaflex. |
 | **Dos audiencias** | Vista clínica completa y proyección paciente mediante una allowlist explícita. |
 | **Safety gate** | Detiene la planificación rutinaria ante señales plausibles de riesgo y pide revisión humana urgente. |
 | **Privacidad local-first** | Sin cuenta, servidor, CDN, telemetría ni llamadas de red para validar o renderizar. |
@@ -64,9 +64,9 @@ flowchart LR
 
 El flujo conserva la diferencia entre reporte, observación, medida, documento, inferencia y desconocido. Una hipótesis no se convierte en hecho por repetirse; las decisiones compartidas quedan marcadas como tales.
 
-## 🧪 Por qué el Hexaflex representa un cambio de paradigma
+## 🧪 Si eliges ACT: por qué el Hexaflex representa un cambio de paradigma
 
-En este README usamos **“revolución” como una afirmación conceptual**, no como una promesa de superioridad universal. El Hexaflex cambia la unidad de análisis: en lugar de preguntar solamente *“¿qué diagnóstico tiene la persona y qué protocolo le corresponde?”*, invita a estudiar **qué procesos contextuales mantienen el sufrimiento, en qué situaciones aparecen y qué conducta valiosa puede construirse a continuación**. Esta lógica es coherente con el giro hacia terapias basadas en procesos, funcionales e idiográficas (Hayes, Hofmann y Ciarrochi, 2020; Moskow et al., 2023).
+Esta sección es opcional y solo aplica si seleccionas ACT/Hexaflex. Usamos **“revolución” como una afirmación conceptual**, no como una promesa de superioridad universal. El Hexaflex cambia la unidad de análisis: en lugar de preguntar solamente *“¿qué diagnóstico tiene la persona y qué protocolo le corresponde?”*, invita a estudiar **qué procesos contextuales mantienen el sufrimiento, en qué situaciones aparecen y qué conducta valiosa puede construirse a continuación**. Esta lógica es coherente con el giro hacia terapias basadas en procesos, funcionales e idiográficas (Hayes, Hofmann y Ciarrochi, 2020; Moskow et al., 2023).
 
 Los seis procesos no son etapas lineales ni casillas que haya que “completar”. Forman un mapa clínico interrelacionado: se seleccionan y se miden según la persona, su contexto y el objetivo acordado.
 
@@ -79,7 +79,7 @@ Los seis procesos no son etapas lineales ni casillas que haya que “completar�
 | **Valores** | ¿Qué cualidad de vida quiere encarnar, aunque no sea una meta que se “termine”? |
 | **Acción comprometida** | ¿Cuál es el siguiente paso pequeño, observable y revisable? |
 
-### Del paquete diagnóstico al proceso que se puede modificar
+### Del paquete diagnóstico al proceso que se puede modificar (lente ACT opcional)
 
 ```mermaid
 flowchart LR
@@ -91,7 +91,7 @@ flowchart LR
     F -. "actualiza" .-> B
 ```
 
-La propuesta es revolucionaria por su **utilidad organizadora**: permite conectar evidencia, contexto y decisiones compartidas sin convertir el diagrama en un diagnóstico automático. La flexibilidad psicológica se ha descrito como una capacidad dinámica para adaptarse a demandas situacionales y actuar de forma congruente con valores (Kashdan y Rottenberg, 2010).
+La propuesta es revolucionaria por su **utilidad organizadora**: permite conectar evidencia, contexto y decisiones compartidas sin convertir el diagrama en un diagnóstico automático. La flexibilidad psicológica se ha descrito como una capacidad dinámica para adaptarse a demandas situacionales y actuar de forma congruente con valores (Kashdan y Rottenberg, 2010). Si se selecciona CBT, DBT u otro marco, este bloque se conserva como referencia educativa y no dirige la formulación.
 
 ### Qué respalda la evidencia (y qué no)
 
@@ -136,7 +136,7 @@ flowchart TB
 - [Recibo de validación clínica](dist/hexaflex.html.receipt.json)
 - [ZIP portable reproducible](dist/hexaflex-clinical.zip)
 
-Los HTML son autocontenidos, funcionan offline, incluyen navegación por teclado, estructura semántica, contraste cuidado, modo claro/oscuro y soporte para `prefers-reduced-motion`.
+Los HTML son autocontenidos, funcionan offline, incluyen navegación por teclado, estructura semántica, cinco presets (`sage`, `ocean`, `amber`, `plum`, `high-contrast`), modo `system`/claro/oscuro y soporte para `prefers-reduced-motion`. El radial de seis procesos se genera solo cuando el modelo elegido es ACT/Hexaflex; con CBT, DBT u otro marco se mantiene un mapa genérico sin imponer constructos.
 
 ## 🛠️ Desarrollo local
 
@@ -147,6 +147,7 @@ npm test
 npm run doctor
 npm run validate
 npm run render
+npm run feedback
 npm run package
 ```
 
@@ -158,11 +159,16 @@ node scripts/render.mjs ruta/caso.json salida.html --view all --audience clinica
 node scripts/render.mjs ruta/caso.json salida-paciente.html --view all --audience patient --confirm-share
 node scripts/ingest.mjs inputs manifest.json
 node scripts/privacy.mjs ruta/caso.json ruta/model-ready.json --mode redact
+node scripts/feedback.mjs ruta/feedback-draft.json ruta/feedback-ready.json --confirmed --mode redact
 ```
 
 El caso de referencia es completamente sintético y está en [`examples/synthetic-case.json`](examples/synthetic-case.json).
 
-Para documentos, crea una carpeta `inputs/` y confirma los archivos que quieres usar. PDF y DOCX se procesan solo si existe un extractor local (`pdftotext` o `pandoc`); de lo contrario quedan como `unsupported` y la skill explica cómo aportar texto extraído sin subirlo a la red. La ingestión aplica límites configurables (5 MB, 20 archivos y 100 páginas por defecto). La política `documents_only` es la opción más restrictiva; `documents_plus_external` exige consentimiento y trazabilidad —URL, fecha, título, fragmento y hash— de cada fuente.
+Para documentos, indica una carpeta `inputs/`; si no existe, la skill ofrece crearla y espera confirmación explícita. Luego muestra un manifiesto y confirma los archivos que quieres usar. PDF y DOCX se procesan solo si existe un extractor local (`pdftotext` o `pandoc`); de lo contrario quedan como `unsupported` y la skill explica cómo aportar texto extraído sin subirlo a la red. La ingestión aplica límites configurables (5 MB, 20 archivos y 100 páginas por defecto). La política `documents_only` es la opción más restrictiva; `documents_plus_external` exige consentimiento y trazabilidad —URL, fecha, título, fragmento y hash— de cada fuente.
+
+### Feedback local y revisión
+
+Cada HTML incluye preguntas distintas para colaboración del paciente o revisión profesional. El botón de exportación es explícito: genera un `feedback.json` local, redacta identificadores y deja un recibo y diff para revisión. No se guarda texto clínico en `localStorage` ni se realizan llamadas de red. Para incorporar un feedback aprobado, usa `incorporateFeedback` desde `scripts/feedback.mjs`; se crea una nueva revisión/versionado y no se sobrescribe el artefacto anterior.
 
 ## 🔐 Privacidad y seguridad
 
@@ -176,7 +182,7 @@ La redacción local es predeterminada. Si se usa pseudonimización, el mapping e
 
 ## 🧩 Arquitectura
 
-La implementación toma de Archify una idea estructural —**IR JSON tipado → validación determinista → artefacto HTML autocontenido**—, pero reemplaza su ontología arquitectónica por procesos ACT, formulación funcional y límites clínicos propios. Consulta [`PROVENANCE.md`](PROVENANCE.md) y [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) para el detalle de procedencia y licencia.
+La implementación toma de Archify una idea estructural —**IR JSON tipado → validación determinista → artefacto HTML autocontenido**—, pero reemplaza su ontología arquitectónica por una capa clínica configurable: formulación funcional, modelo de intervención elegido y límites de seguridad propios. El radial ACT/Hexaflex es una proyección opcional. Consulta [`PROVENANCE.md`](PROVENANCE.md) y [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) para el detalle de procedencia y licencia.
 
 ```text
 SKILL.md                 Router, límites y contrato de uso

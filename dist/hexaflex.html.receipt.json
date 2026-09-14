@@ -38,7 +38,9 @@
   ],
   "warnings": [],
   "case_sha256": "ea9e33135942f1ab4d2609c3d6433a9a23c27ed1b70a9961fbce70e07684f7b0",
+  "artifact_sha256": "9ce17b4683cd13b3b750f354f313e86b1164c7a3b049c9f957de3ff44088a3be",
+  "artifact_binding": "source-case",
   "output": "C:\\Users\\psian\\Documents\\Projects\\Skills\\hexaflex-clinical\\dist\\hexaflex.html",
-  "artifact_sha256": "9437ff5d4f2c2abdee2117b2f1941174d4b0d1a5c02ea86493b4ab766f9ac5fd",
-  "bytes": 18905
+  "source_artifact_sha256": "ea9e33135942f1ab4d2609c3d6433a9a23c27ed1b70a9961fbce70e07684f7b0",
+  "bytes": 36971
 }

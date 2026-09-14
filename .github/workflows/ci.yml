@@ -14,7 +14,11 @@ jobs:
           node-version: 20
       - run: npm run doctor
       - run: npm run test
+      - run: npm run test:visual
       - run: npm run validate
+      - run: npm run render
       - run: npm run ingest
       - run: npm run privacy
+      - run: npm run feedback
+      - run: node -e "const fs=require('fs'); const html=fs.readFileSync('dist/hexaflex.html','utf8'); if(/\\b(?:https?:)?\\/\\//i.test(html)) process.exit(1)"
       - run: npm run package

@@ -76,7 +76,8 @@ function extract(file, kind, buffer, capabilities) {
 
 export function listInputFiles(directory, limits = DEFAULT_LIMITS) {
   const root = path.resolve(directory);
-  if (!fs.existsSync(root) || !fs.statSync(root).isDirectory()) return { files: [], warnings: [`La carpeta no existe o no es una carpeta: ${directory}`] };
+  if (!fs.existsSync(root)) return { files: [], warnings: [`La carpeta no existe: ${directory}`], missing_directory: true, suggested_action: 'create_directory' };
+  if (!fs.statSync(root).isDirectory()) return { files: [], warnings: [`La ruta no es una carpeta: ${directory}`], missing_directory: false, suggested_action: 'choose_directory' };
   const entries = fs.readdirSync(root, { withFileTypes: true }).filter((entry) => !entry.name.startsWith('.')).sort((a, b) => a.name.localeCompare(b.name));
   const files = [];
   const warnings = [];
@@ -89,6 +90,22 @@ export function listInputFiles(directory, limits = DEFAULT_LIMITS) {
     files.push(absolute);
   }
   return { files, warnings };
+}
+
+/**
+ * Create an inputs directory only after an explicit caller confirmation.
+ * Inspection never creates folders implicitly.
+ */
+export function ensureInputDirectory(directory, options = {}) {
+  const root = path.resolve(directory);
+  if (fs.existsSync(root)) {
+    return { path: root, exists: true, created: false, is_directory: fs.statSync(root).isDirectory(), requires_confirmation: false };
+  }
+  if (options.confirmCreate !== true) {
+    return { path: root, exists: false, created: false, is_directory: false, requires_confirmation: true, suggested_action: 'create_directory' };
+  }
+  fs.mkdirSync(root, { recursive: true });
+  return { path: root, exists: true, created: true, is_directory: true, requires_confirmation: false };
 }
 
 export function ingestFiles(selectedFiles, options = {}) {
@@ -122,23 +139,43 @@ export function ingestFiles(selectedFiles, options = {}) {
 }
 
 export function ingestDirectory(directory, options = {}) {
+  const directoryState = ensureInputDirectory(directory, { confirmCreate: options.createDirectory === true });
+  if (!directoryState.is_directory) {
+    return {
+      documents: [], warnings: [`La carpeta no está disponible: ${directoryState.path}.`, 'Confirma la creación de la carpeta antes de cargar documentos.'],
+      selected: [], selection_confirmed: false, requires_confirmation: true,
+      directory: directoryState, capabilities: options.capabilities ?? extractorCapabilities()
+    };
+  }
   const listed = listInputFiles(directory, options.limits);
+  if (options.selectionConfirmed !== true) {
+    const candidates = listed.files.map((file) => ({ display_name: path.basename(file), path: file, kind: EXTENSIONS.get(path.extname(file).toLowerCase()) ?? 'unknown', selected: false }));
+    return {
+      documents: [], candidates, warnings: [...listed.warnings, 'Manifiesto en modo inspección: confirma la selección antes de extraer texto.'],
+      selected: listed.files, selection_confirmed: false, requires_confirmation: true, manifest_only: true,
+      directory: directoryState, capabilities: options.capabilities ?? extractorCapabilities()
+    };
+  }
   const result = ingestFiles(listed.files, options);
   return {
     ...result,
     warnings: [...listed.warnings, ...result.warnings],
     selected: listed.files,
     selection_confirmed: options.selectionConfirmed === true,
-    requires_confirmation: options.selectionConfirmed !== true
+    requires_confirmation: options.selectionConfirmed !== true,
+    directory: directoryState
   };
 }
 
-const [, , input, output] = process.argv;
+const input = process.argv[2];
+const output = process.argv.slice(3).find((arg) => !arg.startsWith('--'));
 if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url))) {
-  if (!input) { console.error('Uso: node scripts/ingest.mjs <carpeta-o-archivo> [manifest.json]'); process.exitCode = 2; }
+  if (!input) { console.error('Uso: node scripts/ingest.mjs <carpeta-o-archivo> [manifest.json] [--create-input-dir] [--confirm-selection]'); process.exitCode = 2; }
   else {
     const absolute = path.resolve(input);
-    const result = fs.existsSync(absolute) && fs.statSync(absolute).isDirectory() ? ingestDirectory(absolute) : ingestFiles([absolute]);
+    const result = fs.existsSync(absolute) && fs.statSync(absolute).isDirectory()
+      ? ingestDirectory(absolute, { selectionConfirmed: process.argv.includes('--confirm-selection') })
+      : fs.existsSync(absolute) ? ingestFiles([absolute]) : ingestDirectory(absolute, { createDirectory: process.argv.includes('--create-input-dir') });
     const manifest = { schema_version: '1.0', selected_at: new Date().toISOString(), ...result };
     if (output) fs.writeFileSync(path.resolve(output), JSON.stringify(manifest, null, 2));
     console.log(JSON.stringify(manifest, null, 2));

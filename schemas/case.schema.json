@@ -19,6 +19,8 @@
       "additionalProperties": true
     },
     "session_config": { "$ref": "session.schema.json" },
+    "visual": { "$ref": "visual-preferences.schema.json" },
+    "feedback": { "$ref": "feedback.schema.json" },
     "source_policy": { "enum": ["documents_only", "documents_plus_external", "external_blocked", "unknown"] },
     "documents": { "type": "array", "items": { "$ref": "document.schema.json" } },
     "privacy": { "$ref": "privacy.schema.json" },

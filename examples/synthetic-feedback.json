@@ -1,0 +1,16 @@
+{
+  "feedback_id": "feedback-synthetic-01",
+  "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "case_ref": "caso-sintetico-001",
+  "audience": "clinical",
+  "consent_status": "confirmed",
+  "entries": [
+    {
+      "id": "felt-useful",
+      "prompt": "¿Qué parte del mapa fue útil?",
+      "response": "La persona indicó que distinguir contexto y conducta ayudó a elegir un paso pequeño.",
+      "provenance": "patient_report",
+      "epistemic_status": "unknown"
+    }
+  ]
+}

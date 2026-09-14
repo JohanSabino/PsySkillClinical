@@ -2,16 +2,18 @@
   "name": "hexaflex-clinical",
   "version": "0.1.0",
   "private": true,
-  "description": "ACT/Hexaflex clinical formulation and safe visual artifacts skill",
+  "description": "Model-agnostic clinical psychology formulation and safe visual artifacts skill",
   "type": "module",
   "license": "MIT",
   "scripts": {
     "validate": "node scripts/validate.mjs examples/synthetic-case.json",
     "render": "node scripts/render.mjs examples/synthetic-case.json dist/hexaflex.html --view all --audience clinical",
-    "ingest": "node scripts/ingest.mjs examples/synthetic-input",
+    "ingest": "node scripts/ingest.mjs examples/synthetic-input --confirm-selection",
     "privacy": "node scripts/privacy.mjs examples/synthetic-case.json output/model-ready.json --mode redact",
+    "feedback": "node scripts/feedback.mjs examples/synthetic-feedback.json output/feedback-ready.json --confirmed --mode redact",
     "doctor": "node scripts/doctor.mjs",
     "package": "node scripts/package.mjs dist/hexaflex-clinical.zip",
-    "test": "node tests/run-tests.mjs"
+    "test": "node tests/run-tests.mjs",
+    "test:visual": "node tests/visual-static.mjs"
   }
 }

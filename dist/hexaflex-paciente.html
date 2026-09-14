@@ -1,15 +1,25 @@
 <!doctype html>
-<html lang="es">
+<html lang="es" data-initial-mode="system" data-initial-preset="sage">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="data:,">
   <title>Mapa de flexibilidad — caso sintético</title>
   <style>
-    :root { color-scheme: light; --ink:#17343a; --muted:#52686b; --paper:#f6f8f6; --card:#fff; --line:#d5e2df; --accent:#2f6f67; --accent-soft:#e1f0ec; --warm:#e8a45c; --hyp:#7d6298; --shadow:0 10px 30px rgba(23,52,58,.10); }
+    :root { color-scheme: light; --ink:#17343a; --muted:#52686b; --paper:#f6f8f6; --card:#fff; --line:#d5e2df; --accent:#2f6f67; --accent-soft:#e1f0ec; --warm:#e8a45c; --hyp:#7d6298; --shadow:0 10px 30px rgba(23,52,58,.10); --focus:#d88620; }
+    :root[data-theme="dark"] { color-scheme:dark; --ink:#e7f0ed; --muted:#b6c8c4; --paper:#142326; --card:#1e3033; --line:#355356; --accent:#8ed2c3; --accent-soft:#23443f; --warm:#f2bf78; --hyp:#c8a9df; --shadow:0 10px 30px rgba(0,0,0,.2); --focus:#ffd27f; }
+    :root[data-theme="light"] { color-scheme:light; }
+    :root[data-preset="ocean"] { --accent:#1769aa; --accent-soft:#e2f1ff; --warm:#d77928; }
+    :root[data-preset="amber"] { --accent:#9a5b12; --accent-soft:#fff0d8; --warm:#c6402f; }
+    :root[data-preset="plum"] { --accent:#704486; --accent-soft:#f2e8f8; --warm:#bd6b42; --hyp:#9b5b9f; }
+    :root[data-preset="high-contrast"] { --ink:#101010; --muted:#303030; --paper:#fff; --card:#fff; --line:#111; --accent:#003b76; --accent-soft:#e4efff; --warm:#7a2100; --hyp:#5a1a7a; --shadow:none; --focus:#b00020; }
+    :root[data-theme="dark"][data-preset="ocean"] { --ink:#e9f5ff; --muted:#bbd5e7; --paper:#0e1e2d; --card:#172d41; --line:#365b75; --accent:#74c2ff; --accent-soft:#173d59; }
+    :root[data-theme="dark"][data-preset="amber"] { --ink:#fff4df; --muted:#ead4b1; --paper:#2b2115; --card:#3a2c1c; --line:#6a5030; --accent:#ffd080; --accent-soft:#5b3d1b; }
+    :root[data-theme="dark"][data-preset="plum"] { --ink:#f7eafd; --muted:#d9c5df; --paper:#251a2d; --card:#34233f; --line:#60466e; --accent:#ddb4ed; --accent-soft:#4a2f57; }
+    :root[data-theme="dark"][data-preset="high-contrast"] { --ink:#fff; --muted:#eee; --paper:#000; --card:#050505; --line:#fff; --accent:#6ec1ff; --accent-soft:#17344c; --warm:#ffd37a; --hyp:#e2a8ff; --shadow:none; }
     * { box-sizing:border-box; }
     body { margin:0; font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--ink); background:var(--paper); }
-    header { padding:2rem max(1rem,calc((100% - 1100px)/2)); background:linear-gradient(130deg,#e7f2ef,#fff8ee); border-bottom:1px solid var(--line); }
+    header { padding:2rem max(1rem,calc((100% - 1100px)/2)); background:linear-gradient(130deg,var(--accent-soft),var(--paper)); border-bottom:1px solid var(--line); }
     main { max-width:1100px; margin:0 auto; padding:1rem; }
     h1,h2,h3 { line-height:1.2; }
     h1 { max-width:800px; margin:.2rem 0 .5rem; font-size:clamp(1.8rem,4vw,3rem); }
@@ -23,78 +33,177 @@
     .summary-stats dt { color:var(--muted); font-size:.78rem; }
     .summary-stats dd { font-size:1.45rem; font-weight:750; margin:0; }
     .summary-chips { margin-bottom:.55rem; }
-    .filters { display:flex; flex-wrap:wrap; align-items:end; gap:.6rem; border-top:1px solid var(--line); padding-top:.8rem; }
+    .toolbar,.filters { display:flex; flex-wrap:wrap; align-items:end; gap:.6rem; border-top:1px solid var(--line); padding-top:.8rem; }
+    .toolbar { border-top:0; padding-top:0; justify-content:flex-end; margin-bottom:1rem; }
+    .toolbar label,.toolbar button { font-size:.86rem; }
     .filters label { color:var(--muted); display:flex; flex-direction:column; font-size:.82rem; gap:.2rem; }
-    .filters select { border:1px solid var(--line); border-radius:8px; color:var(--ink); background:var(--card); min-height:2rem; padding:.25rem .45rem; }
+    .filters select,.filters input,.toolbar select { border:1px solid var(--line); border-radius:8px; color:var(--ink); background:var(--card); min-height:2rem; padding:.25rem .45rem; }
     .filters button { min-height:2rem; }
     .filterable[hidden] { display:none; }
     .filterable.is-filtered { opacity:.3; }
-    .notice { padding:.8rem 1rem; background:#fff6e9; border:1px solid #edc98d; border-radius:12px; }
+    .notice { padding:.8rem 1rem; background:var(--accent-soft); border:1px solid var(--line); border-radius:12px; }
     .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem; }
     .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1rem; box-shadow:var(--shadow); }
     .card h3 { margin-top:0; color:var(--accent); }
     .tag { display:inline-block; padding:.15rem .55rem; border-radius:999px; background:var(--accent-soft); color:var(--accent); font-size:.82rem; margin:.15rem .2rem .15rem 0; }
     .tag.hyp { background:#f0eaf6; color:var(--hyp); }
     .cycle { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:.7rem; align-items:stretch; }
-    .step { position:relative; background:#fff; border:1px solid var(--line); border-radius:12px; padding:.9rem; }
+    .step { position:relative; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:.9rem; }
     .step strong { display:block; color:var(--accent); }
     .arrow { display:none; }
-    details { background:#fff; border:1px solid var(--line); border-radius:12px; padding:.7rem 1rem; }
+    details { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:.7rem 1rem; }
     summary { cursor:pointer; font-weight:650; }
     ul { padding-left:1.25rem; }
     code { overflow-wrap:anywhere; word-break:break-word; }
     footer p { overflow-wrap:anywhere; word-break:break-word; }
     .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
     footer { max-width:1100px; margin:2rem auto; padding:1rem; color:var(--muted); font-size:.9rem; }
-    button { border:1px solid var(--accent); color:var(--accent); background:white; border-radius:8px; padding:.45rem .7rem; cursor:pointer; }
-    button:focus-visible, summary:focus-visible { outline:3px solid #f0b45b; outline-offset:2px; }
+    button { border:1px solid var(--accent); color:var(--accent); background:var(--card); border-radius:8px; padding:.45rem .7rem; cursor:pointer; }
+    button:focus-visible, summary:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible { outline:3px solid var(--focus); outline-offset:2px; }
+    .radial { display:grid; grid-template-columns:minmax(220px,1fr) minmax(220px,1fr); gap:1rem; align-items:center; margin:1rem 0; }
+    .radial svg { width:100%; max-width:520px; margin:auto; overflow:visible; }
+    .radial-node { cursor:pointer; fill:var(--accent-soft); stroke:var(--accent); stroke-width:2; }
+    .radial-node:hover,.radial-node:focus { fill:var(--accent); stroke:var(--focus); }
+    .radial-node.is-selected { fill:var(--accent); }
+    .radial-node-label { fill:var(--ink); font-size:12px; pointer-events:none; }
+    .guided-story { border:1px solid var(--line); border-radius:14px; padding:1rem; background:var(--card); }
+    .guided-story[hidden] { display:none; }
+    .guided-step[hidden] { display:none; }
+    .guided-controls { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.7rem; }
+    .feedback-panel textarea { width:100%; min-height:5rem; border:1px solid var(--line); border-radius:8px; color:var(--ink); background:var(--card); padding:.6rem; }
+    .feedback-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:.8rem; }
     @media (prefers-reduced-motion: no-preference) { .card { transition:transform .18s ease,box-shadow .18s ease; } .card:hover { transform:translateY(-2px); box-shadow:0 14px 34px rgba(23,52,58,.14); } }
     @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration:.001ms !important; transition-duration:.001ms !important; scroll-behavior:auto !important; } }
-    @media (prefers-color-scheme: dark) { :root { color-scheme:dark; --ink:#e7f0ed; --muted:#b6c8c4; --paper:#142326; --card:#1e3033; --line:#355356; --accent:#8ed2c3; --accent-soft:#23443f; --warm:#f2bf78; --hyp:#c8a9df; --shadow:0 10px 30px rgba(0,0,0,.2); } header { background:linear-gradient(130deg,#193832,#342d20); } .step,details,button { background:var(--card); } }
-    @media (max-width:600px) { .filters { align-items:stretch; flex-direction:column; } .filters label, .filters select, .filters button { width:100%; } }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]):not([data-theme="dark"]) { color-scheme:dark; --ink:#e7f0ed; --muted:#b6c8c4; --paper:#142326; --card:#1e3033; --line:#355356; --accent:#8ed2c3; --accent-soft:#23443f; --warm:#f2bf78; --hyp:#c8a9df; --shadow:0 10px 30px rgba(0,0,0,.2); } }
+    @media (max-width:600px) { .filters,.toolbar { align-items:stretch; flex-direction:column; } .filters label, .filters select, .filters input, .filters button, .toolbar label, .toolbar select, .toolbar button { width:100%; } .radial { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
   <header>
     <p class="meta">Vista paciente · artefacto local · fuente validada</p>
     <h1>Mapa de flexibilidad — caso sintético</h1>
-    <p class="meta">Exploración colaborativa en lenguaje sencillo</p>
+    <p class="meta">Exploración colaborativa en lenguaje sencillo · modelo: ACT/Hexaflex</p>
+    <div class="toolbar" aria-label="Preferencias visuales">
+      <label>Preset <select id="visual-preset" aria-label="Preset de color"><option value="sage">Sage</option><option value="ocean">Ocean</option><option value="amber">Amber</option><option value="plum">Plum</option><option value="high-contrast">Alto contraste</option></select></label>
+      <label>Tema <select id="visual-theme" aria-label="Tema"><option value="system">Sistema</option><option value="light">Claro</option><option value="dark">Oscuro</option></select></label>
+      <button type="button" id="theme-toggle" aria-pressed="false">Cambiar tema</button>
+    </div>
   </header>
   <main>
-    <p class="notice" role="status">Previsualización psicoeducativa: aún no está marcada como material compartible.</p><section class="summary-panel" aria-labelledby="summary-title"><div><p class="eyebrow">Resumen rápido</p><h2 id="summary-title">Orientación de esta sesión</h2><p class="meta">Observar un patrón y elegir una dirección valiosa</p></div><dl class="summary-stats"><div><dt>Patrones</dt><dd>2</dd></div><div><dt>Valores</dt><dd>1</dd></div><div><dt>Sesiones</dt><dd>1</dd></div><div><dt>Fuentes</dt><dd>4</dd></div></dl><div class="summary-chips"><span class="tag">Audiencia: patient</span><span class="tag">Fuentes: documents_only</span><span class="tag">Privacidad: redact</span></div><div class="filters" aria-label="Filtros de presentación"><label>Proceso <select id="process-filter"><option value="all">Todos</option><option value="acceptance">Aceptación</option><option value="defusion">Defusión</option><option value="present_moment">Momento presente</option><option value="self_as_context">Yo-como-contexto</option><option value="values">Valores</option><option value="committed_action">Acción comprometida</option></select></label><label>Evidencia <select id="evidence-filter"><option value="all">Todos</option><option value="fact">Hecho/reporte</option><option value="hypothesis">Hipótesis</option><option value="shared_decision">Decisión compartida</option><option value="unknown">Desconocido</option></select></label><label>Audiencia <select id="audience-filter"><option value="all">Todas</option><option value="clinical">Clínica</option><option value="patient">Paciente</option><option value="shareable">Compartible</option></select></label><button type="button" id="reset-filters">Restablecer</button><span id="filter-summary" class="meta" role="status" aria-live="polite"></span></div><noscript><p class="meta">Los filtros son opcionales; todo el contenido sigue disponible con JavaScript desactivado.</p></noscript></section><section aria-labelledby="hexaflex-title"><h2 id="hexaflex-title">Mapa Hexaflex</h2><p class="meta">Los procesos son lentes que pueden aparecer juntos; no representan diagnóstico.</p><div class="grid"><article class="card filterable" data-pattern-id="process-defusion" data-processes="defusion" data-audience="patient" data-evidence="fact"><h3>Defusión</h3><p>Una perspectiva para explorar con curiosidad y flexibilidad.</p></article><article class="card filterable" data-pattern-id="process-acceptance" data-processes="acceptance" data-audience="patient" data-evidence="fact"><h3>Aceptación</h3><p>Una perspectiva para explorar con curiosidad y flexibilidad.</p></article><article class="card filterable" data-pattern-id="process-present_moment" data-processes="present_moment" data-audience="patient" data-evidence="fact"><h3>Momento presente</h3><p>Una perspectiva para explorar con curiosidad y flexibilidad.</p></article><article class="card filterable" data-pattern-id="process-committed_action" data-processes="committed_action" data-audience="patient" data-evidence="fact"><h3>Acción comprometida</h3><p>Una perspectiva para explorar con curiosidad y flexibilidad.</p></article><article class="card filterable" data-pattern-id="process-self_as_context" data-processes="self_as_context" data-audience="patient" data-evidence="fact"><h3>Yo-como-contexto</h3><p>Una perspectiva para explorar con curiosidad y flexibilidad.</p></article></div><h3>Patrones y direcciones</h3><div class="grid"><article class="card filterable" data-pattern-id="pat-anticipacion" data-processes="defusion,acceptance,present_moment,committed_action" data-audience="patient" data-evidence="fact"><h3>Anticipación y retirada de conversaciones difíciles</h3><p><span class="tag">Defusión</span><span class="tag">Aceptación</span><span class="tag">Momento presente</span><span class="tag">Acción comprometida</span></p><ul class=""><li>Comunicación honesta y cuidado de relaciones</li></ul></article><article class="card filterable" data-pattern-id="pat-desconocido" data-processes="self_as_context,present_moment" data-audience="patient" data-evidence="fact"><h3>Momento de desconexión aún no comprendido</h3><p><span class="tag">Yo-como-contexto</span><span class="tag">Momento presente</span></p><p class="meta">Sin información confirmada.</p></article></div></section><section aria-labelledby="cycle-title"><h2 id="cycle-title">Ciclo funcional</h2><p class="meta">Las conexiones inferidas se muestran como hipótesis revisables, no como causalidad comprobada.</p><div class="grid"><article class="card filterable" data-pattern-id="pat-anticipacion" data-processes="defusion,acceptance,present_moment,committed_action" data-audience="patient" data-evidence="shared_decision"><h3>Anticipación y retirada de conversaciones difíciles</h3><p>Podemos observar este patrón con curiosidad y elegir qué explorar.</p><ul class=""><li>Dirección valiosa: Comunicación honesta y cuidado de relaciones</li></ul></article><article class="card filterable" data-pattern-id="pat-desconocido" data-processes="self_as_context,present_moment" data-audience="patient" data-evidence="shared_decision"><h3>Momento de desconexión aún no comprendido</h3><p>Podemos observar este patrón con curiosidad y elegir qué explorar.</p><p class="meta">Sin información confirmada.</p></article></div></section><section aria-labelledby="values-title"><h2 id="values-title">Brújula valores–acciones</h2><div class="grid"><article class="card"><h3>Direcciones elegidas</h3><ul class=""><li>Comunicación honesta y cuidado de relaciones</li></ul></article><article class="card"><h3>Preguntas para conversar</h3><p>¿Qué paso pequeño tendría sentido para ti?</p></article></div><h3>Hoja de ruta de sesiones</h3><div class="grid"><article class="card filterable" data-pattern-id="ses-01" data-processes="defusion,present_moment,values" data-audience="patient" data-evidence="shared_decision"><h3>Observar el patrón y elegir una dirección</h3><p>Construir un mapa compartido del patrón y acordar un paso pequeño</p><p><span class="tag">Defusión</span><span class="tag">Momento presente</span><span class="tag">Valores</span></p><details><summary>Práctica y seguimiento</summary><ul class=""><li>Registrar una ocasión de notar la historia y una elección posible, sin exigencia de realizar la conversación</li></ul></details></article></div></section><section aria-labelledby="roadmap-title"><h2 id="roadmap-title">Sesiones</h2><div class="grid"><article class="card filterable" data-pattern-id="ses-01" data-processes="defusion,present_moment,values" data-audience="patient" data-evidence="shared_decision"><p class="meta">Sesión 1</p><h3>Observar el patrón y elegir una dirección</h3><p>Construir un mapa compartido del patrón y acordar un paso pequeño</p><p><span class="tag">Defusión</span><span class="tag">Momento presente</span><span class="tag">Valores</span></p><p><strong>Agenda:</strong></p><p>Se acuerda conjuntamente en sesión.</p><p><strong>Consentimiento:</strong> Puedes preguntar, pausar o cambiar el ejercicio.</p></article></div></section>
+    <p class="notice" role="status">Previsualización psicoeducativa: aún no está marcada como material compartible.</p><section class="summary-panel" aria-labelledby="summary-title"><div><p class="eyebrow">Resumen rápido</p><h2 id="summary-title">Orientación de esta sesión</h2><p class="meta">Observar un patrón y elegir una dirección valiosa</p></div><dl class="summary-stats"><div><dt>Patrones</dt><dd>2</dd></div><div><dt>Valores</dt><dd>1</dd></div><div><dt>Sesiones</dt><dd>1</dd></div><div><dt>Fuentes</dt><dd>4</dd></div></dl><div class="summary-chips"><span class="tag">Audiencia: patient</span><span class="tag">Fuentes: documents_only</span><span class="tag">Privacidad: redact</span></div><div class="filters" aria-label="Filtros de presentación"><label>Buscar <input id="map-search" type="search" placeholder="Palabra o tema" autocomplete="off"></label><label>Proceso <select id="process-filter"><option value="all">Todos</option><option value="acceptance">Aceptación</option><option value="defusion">Defusión</option><option value="present_moment">Momento presente</option><option value="self_as_context">Yo-como-contexto</option><option value="values">Valores</option><option value="committed_action">Acción comprometida</option></select></label><label>Evidencia <select id="evidence-filter"><option value="all">Todos</option><option value="fact">Hecho/reporte</option><option value="hypothesis">Hipótesis</option><option value="shared_decision">Decisión compartida</option><option value="unknown">Desconocido</option></select></label><label>Audiencia <select id="audience-filter"><option value="all">Todas</option><option value="clinical">Clínica</option><option value="patient">Paciente</option><option value="shareable">Compartible</option></select></label><button type="button" id="reset-filters">Restablecer</button><span id="filter-summary" class="meta" role="status" aria-live="polite"></span></div><noscript><p class="meta">Los filtros son opcionales; todo el contenido sigue disponible con JavaScript desactivado.</p></noscript></section><section aria-labelledby="hexaflex-title"><h2 id="hexaflex-title">Mapa Hexaflex · ACT</h2><p class="meta">Los procesos son lentes que pueden aparecer juntos; no representan diagnóstico.</p><div class="radial" aria-label="Diagrama radial Hexaflex"><svg viewBox="0 0 440 360" role="img" aria-labelledby="radial-title radial-desc"><title id="radial-title">Procesos Hexaflex</title><desc id="radial-desc">Seis procesos interrelacionados. Selecciona un nodo para abrir su tarjeta.</desc><line x1="220" y1="180" x2="220" y2="30" stroke="var(--line)" stroke-width="2" aria-hidden="true"></line><line x1="220" y1="180" x2="350" y2="105" stroke="var(--line)" stroke-width="2" aria-hidden="true"></line><line x1="220" y1="180" x2="350" y2="255" stroke="var(--line)" stroke-width="2" aria-hidden="true"></line><line x1="220" y1="180" x2="220" y2="330" stroke="var(--line)" stroke-width="2" aria-hidden="true"></line><line x1="220" y1="180" x2="90" y2="255" stroke="var(--line)" stroke-width="2" aria-hidden="true"></line><line x1="220" y1="180" x2="90" y2="105" stroke="var(--line)" stroke-width="2" aria-hidden="true"></line><circle cx="220" cy="180" r="54" fill="var(--accent)" opacity=".9"></circle><text x="220" y="185" text-anchor="middle" fill="var(--card)" font-weight="700">ACT / Hexaflex</text><g><circle class="radial-node" tabindex="0" role="button" cx="220" cy="30" r="42" aria-label="Aceptación" aria-controls="process-acceptance"></circle><text class="radial-node-label" x="220" y="34" text-anchor="middle">Aceptación</text></g><g><circle class="radial-node" tabindex="0" role="button" cx="350" cy="105" r="42" aria-label="Defusión" aria-controls="process-defusion"></circle><text class="radial-node-label" x="350" y="109" text-anchor="middle">Defusión</text></g><g><circle class="radial-node" tabindex="0" role="button" cx="350" cy="255" r="42" aria-label="Momento presente" aria-controls="process-present_moment"></circle><text class="radial-node-label" x="350" y="259" text-anchor="middle">Momento presente</text></g><g><circle class="radial-node" tabindex="0" role="button" cx="220" cy="330" r="42" aria-label="Yo-como-contexto" aria-controls="process-self_as_context"></circle><text class="radial-node-label" x="220" y="334" text-anchor="middle">Yo-como-contexto</text></g><g><circle class="radial-node" tabindex="0" role="button" cx="90" cy="255" r="42" aria-label="Valores" aria-controls="process-values"></circle><text class="radial-node-label" x="90" y="259" text-anchor="middle">Valores</text></g><g><circle class="radial-node" tabindex="0" role="button" cx="90" cy="105" r="42" aria-label="Acción comprometida" aria-controls="process-committed_action"></circle><text class="radial-node-label" x="90" y="109" text-anchor="middle">Acción comprometida</text></g></svg><p class="meta">Selecciona un nodo para ir a su explicación. El diagrama es un mapa, no una puntuación.</p></div><div class="grid"><article id="process-defusion" tabindex="0" class="card filterable" data-pattern-id="process-defusion" data-processes="defusion" data-audience="patient" data-evidence="fact"><h3>Defusión</h3><p>Una perspectiva para explorar con curiosidad y flexibilidad.</p></article><article id="process-acceptance" tabindex="0" class="card filterable" data-pattern-id="process-acceptance" data-processes="acceptance" data-audience="patient" data-evidence="fact"><h3>Aceptación</h3><p>Una perspectiva para explorar con curiosidad y flexibilidad.</p></article><article id="process-present_moment" tabindex="0" class="card filterable" data-pattern-id="process-present_moment" data-processes="present_moment" data-audience="patient" data-evidence="fact"><h3>Momento presente</h3><p>Una perspectiva para explorar con curiosidad y flexibilidad.</p></article><article id="process-committed_action" tabindex="0" class="card filterable" data-pattern-id="process-committed_action" data-processes="committed_action" data-audience="patient" data-evidence="fact"><h3>Acción comprometida</h3><p>Una perspectiva para explorar con curiosidad y flexibilidad.</p></article><article id="process-self_as_context" tabindex="0" class="card filterable" data-pattern-id="process-self_as_context" data-processes="self_as_context" data-audience="patient" data-evidence="fact"><h3>Yo-como-contexto</h3><p>Una perspectiva para explorar con curiosidad y flexibilidad.</p></article></div><h3>Patrones y direcciones</h3><div class="grid"><article class="card filterable" data-pattern-id="pat-anticipacion" data-processes="defusion,acceptance,present_moment,committed_action" data-audience="patient" data-evidence="fact"><h3>Anticipación y retirada de conversaciones difíciles</h3><p><span class="tag">Defusión</span><span class="tag">Aceptación</span><span class="tag">Momento presente</span><span class="tag">Acción comprometida</span></p><ul class=""><li>Comunicación honesta y cuidado de relaciones</li></ul></article><article class="card filterable" data-pattern-id="pat-desconocido" data-processes="self_as_context,present_moment" data-audience="patient" data-evidence="fact"><h3>Momento de desconexión aún no comprendido</h3><p><span class="tag">Yo-como-contexto</span><span class="tag">Momento presente</span></p><p class="meta">Sin información confirmada.</p></article></div></section><section aria-labelledby="cycle-title"><h2 id="cycle-title">Ciclo funcional</h2><p class="meta">Las conexiones inferidas se muestran como hipótesis revisables, no como causalidad comprobada.</p><div class="grid"><article class="card filterable" data-pattern-id="pat-anticipacion" data-processes="defusion,acceptance,present_moment,committed_action" data-audience="patient" data-evidence="shared_decision"><h3>Anticipación y retirada de conversaciones difíciles</h3><p>Podemos observar este patrón con curiosidad y elegir qué explorar.</p><ul class=""><li>Dirección valiosa: Comunicación honesta y cuidado de relaciones</li></ul></article><article class="card filterable" data-pattern-id="pat-desconocido" data-processes="self_as_context,present_moment" data-audience="patient" data-evidence="shared_decision"><h3>Momento de desconexión aún no comprendido</h3><p>Podemos observar este patrón con curiosidad y elegir qué explorar.</p><p class="meta">Sin información confirmada.</p></article></div></section><section aria-labelledby="values-title"><h2 id="values-title">Brújula valores–acciones</h2><div class="grid"><article class="card"><h3>Direcciones elegidas</h3><ul class=""><li>Comunicación honesta y cuidado de relaciones</li></ul></article><article class="card"><h3>Preguntas para conversar</h3><p>¿Qué paso pequeño tendría sentido para ti?</p></article></div><h3>Hoja de ruta de sesiones</h3><div class="grid"><article class="card filterable" data-pattern-id="ses-01" data-processes="defusion,present_moment,values" data-audience="patient" data-evidence="shared_decision"><h3>Observar el patrón y elegir una dirección</h3><p>Construir un mapa compartido del patrón y acordar un paso pequeño</p><p><span class="tag">Defusión</span><span class="tag">Momento presente</span><span class="tag">Valores</span></p><details><summary>Práctica y seguimiento</summary><ul class=""><li>Registrar una ocasión de notar la historia y una elección posible, sin exigencia de realizar la conversación</li></ul></details></article></div></section><section aria-labelledby="roadmap-title"><h2 id="roadmap-title">Sesiones</h2><div class="grid"><article class="card filterable" data-pattern-id="ses-01" data-processes="defusion,present_moment,values" data-audience="patient" data-evidence="shared_decision"><p class="meta">Sesión 1</p><h3>Observar el patrón y elegir una dirección</h3><p>Construir un mapa compartido del patrón y acordar un paso pequeño</p><p><span class="tag">Defusión</span><span class="tag">Momento presente</span><span class="tag">Valores</span></p><p><strong>Agenda:</strong></p><p>Se acuerda conjuntamente en sesión.</p><p><strong>Consentimiento:</strong> Puedes preguntar, pausar o cambiar el ejercicio.</p></article></div></section><section class="guided-section" aria-labelledby="guided-title"><h2 id="guided-title">Recorrido guiado</h2><p class="meta">Una secuencia breve y pausible para presentar el mapa; salir no modifica el caso.</p><button type="button" id="start-guided">Iniciar recorrido</button><div id="guided-story" class="guided-story" hidden aria-live="polite"><p class="guided-counter meta"></p><article class="guided-step" data-step="0" ><h3>Orientarnos</h3><p>Observar un patrón y elegir una dirección valiosa</p></article><article class="guided-step" data-step="1" hidden><h3>Observar el patrón</h3><p>Distinguir contexto, experiencia, conducta y efectos sin convertir hipótesis en hechos.</p></article><article class="guided-step" data-step="2" hidden><h3>Elegir una dirección</h3><p>Conversar un paso pequeño y valioso que tenga sentido para ti.</p></article><article class="guided-step" data-step="3" hidden><h3>Revisar y adaptar</h3><p>Registrar qué ocurrió y ajustar el siguiente paso con la persona.</p></article><div class="guided-controls"><button type="button" id="guided-prev">Anterior</button><button type="button" id="guided-next">Siguiente</button><button type="button" id="guided-pause" aria-pressed="false">Pausar</button><button type="button" id="guided-exit">Salir</button></div></div></section><section class="feedback-panel" aria-labelledby="feedback-title"><h2 id="feedback-title">Feedback para la siguiente revisión</h2><p class="meta">Se prepara en tu dispositivo, con redacción local y sin enviar texto a la red. Revisa el archivo antes de incorporarlo.</p><form id="feedback-form"><div class="feedback-grid"><label for="feedback-fits">¿Qué parte encaja contigo y cuál no encaja?<textarea id="feedback-fits" data-feedback-id="fits" data-provenance="patient_report" data-prompt="¿Qué parte encaja contigo y cuál no encaja?"></textarea></label><label for="feedback-explore">¿Qué te gustaría explorar o aclarar?<textarea id="feedback-explore" data-feedback-id="explore" data-provenance="patient_report" data-prompt="¿Qué te gustaría explorar o aclarar?"></textarea></label><label for="feedback-next-step">¿Qué paso pequeño se siente elegido por ti?<textarea id="feedback-next-step" data-feedback-id="next-step" data-provenance="shared_decision" data-prompt="¿Qué paso pequeño se siente elegido por ti?"></textarea></label></div><label><input type="checkbox" name="feedback-consent"> Confirmo que puedo revisar y exportar este borrador local.</label><p><button type="submit">Preparar feedback local</button> <span class="feedback-status meta" role="status" aria-live="polite"></span></p></form><noscript><p class="meta">Con JavaScript desactivado puedes leer las preguntas, pero la exportación debe hacerse con el comando local de feedback.</p></noscript></section>
   </main>
   <footer>
     <p>Este material apoya una conversación clínica y no constituye diagnóstico, prescripción ni evaluación de riesgo. Revisar antes de compartir.</p>
     <p>Fuente: <code>caso-sintetico-01</code> · esquema <code>1.0</code> · hash de fuente <code>ea9e33135942f1ab4d2609c3d6433a9a23c27ed1b70a9961fbce70e07684f7b0</code></p>
   </footer>
-  <script type="application/json" id="validation-receipt">{"valid":true,"schema_version":"1.0","case_ref":"caso-sintetico-01","audience":"patient","map_view":"all","source_policy":"documents_only","privacy_mode":"redact","checks":[{"name":"schema","passed":true},{"name":"provenance","passed":true},{"name":"safety","passed":true},{"name":"privacy","passed":true},{"name":"audience","passed":true},{"name":"warnings","passed":true},{"name":"delivery","passed":true}],"warnings":[],"case_sha256":"ea9e33135942f1ab4d2609c3d6433a9a23c27ed1b70a9961fbce70e07684f7b0"}</script>
+  <script type="application/json" id="validation-receipt">{"valid":true,"schema_version":"1.0","case_ref":"caso-sintetico-01","audience":"patient","map_view":"all","source_policy":"documents_only","privacy_mode":"redact","checks":[{"name":"schema","passed":true},{"name":"provenance","passed":true},{"name":"safety","passed":true},{"name":"privacy","passed":true},{"name":"audience","passed":true},{"name":"warnings","passed":true},{"name":"delivery","passed":true}],"warnings":[],"case_sha256":"ea9e33135942f1ab4d2609c3d6433a9a23c27ed1b70a9961fbce70e07684f7b0","artifact_sha256":"ea9e33135942f1ab4d2609c3d6433a9a23c27ed1b70a9961fbce70e07684f7b0","artifact_binding":"source-case"}</script>
   <script>
     (() => {
+      const root = document.documentElement;
+      const receiptNode = document.querySelector('#validation-receipt');
+      let receipt = {};
+      try { receipt = JSON.parse(receiptNode?.textContent ?? '{}'); } catch { receipt = {}; }
+      const preferenceKey = 'clinical-practice-visual-preferences';
+      const themeSelect = document.querySelector('#visual-theme');
+      const presetSelect = document.querySelector('#visual-preset');
+      const themeToggle = document.querySelector('#theme-toggle');
+      const systemDark = () => window.matchMedia?.('(prefers-color-scheme: dark)').matches === true;
+      const applyTheme = (mode) => {
+        if (mode === 'dark' || (mode === 'system' && systemDark())) root.dataset.theme = 'dark';
+        else if (mode === 'light') root.dataset.theme = 'light';
+        else delete root.dataset.theme;
+        if (themeSelect) themeSelect.value = mode;
+        if (themeToggle) { themeToggle.setAttribute('aria-pressed', mode === 'dark' ? 'true' : 'false'); themeToggle.setAttribute('aria-label', mode === 'dark' ? 'Cambiar al tema claro' : 'Cambiar al tema oscuro'); themeToggle.textContent = mode === 'dark' ? 'Usar claro' : 'Usar oscuro'; }
+      };
+      let preferences = { mode: root.dataset.initialMode || 'system', preset: root.dataset.initialPreset || 'sage' };
+      try { preferences = { ...preferences, ...JSON.parse(localStorage.getItem(preferenceKey) || '{}') }; } catch { /* local preference is optional */ }
+      if (presetSelect) { presetSelect.value = preferences.preset; root.dataset.preset = preferences.preset; }
+      applyTheme(preferences.mode);
+      const savePreferences = () => { try { localStorage.setItem(preferenceKey, JSON.stringify(preferences)); } catch { /* private mode or disabled storage */ } };
+      themeSelect?.addEventListener('change', () => { preferences.mode = themeSelect.value; applyTheme(preferences.mode); savePreferences(); });
+      presetSelect?.addEventListener('change', () => { preferences.preset = presetSelect.value; root.dataset.preset = preferences.preset; savePreferences(); });
+      themeToggle?.addEventListener('click', () => { preferences.mode = (root.dataset.theme === 'dark') ? 'light' : 'dark'; applyTheme(preferences.mode); savePreferences(); });
+      window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change', () => { if (preferences.mode === 'system') applyTheme('system'); });
+
       const cards = [...document.querySelectorAll('.filterable')];
       const process = document.querySelector('#process-filter');
       const evidence = document.querySelector('#evidence-filter');
       const audience = document.querySelector('#audience-filter');
+      const search = document.querySelector('#map-search');
       const status = document.querySelector('#filter-summary');
       const reset = document.querySelector('#reset-filters');
       const apply = () => {
         const selectedProcess = process?.value ?? 'all';
         const selectedEvidence = evidence?.value ?? 'all';
         const selectedAudience = audience?.value ?? 'all';
+        const query = (search?.value ?? '').trim().toLocaleLowerCase();
         let visible = 0;
         cards.forEach((card) => {
           const matchesProcess = selectedProcess === 'all' || (card.dataset.processes ?? '').split(',').includes(selectedProcess);
           const matchesEvidence = selectedEvidence === 'all' || card.dataset.evidence === selectedEvidence;
           const matchesAudience = selectedAudience === 'all' || card.dataset.audience === selectedAudience;
-          const show = matchesProcess && matchesEvidence && matchesAudience;
+          const matchesSearch = !query || card.textContent.toLocaleLowerCase().includes(query);
+          const show = matchesProcess && matchesEvidence && matchesAudience && matchesSearch;
           card.hidden = !show;
           card.classList.toggle('is-filtered', !show);
           if (show) visible += 1;
         });
-        if (status) status.textContent = `Mostrando ${visible} de ${cards.length} bloques`;
+        if (status) status.textContent = `Mostrando ${visible} de ${cards.length} bloques${query ? ` · búsqueda: ${query}` : ''}`;
       };
       [process, evidence, audience].forEach((control) => control?.addEventListener('change', apply));
-      reset?.addEventListener('click', () => { [process, evidence, audience].forEach((control) => { if (control) control.value = 'all'; }); apply(); });
+      search?.addEventListener('input', apply);
+      reset?.addEventListener('click', () => { [process, evidence, audience].forEach((control) => { if (control) control.value = 'all'; }); if (search) search.value = ''; apply(); });
       document.querySelectorAll('details').forEach((detail) => { detail.addEventListener('toggle', () => { detail.setAttribute('aria-live', 'polite'); }); });
+
+      const selectRadialNode = (node) => {
+        document.querySelectorAll('.radial-node').forEach((item) => item.classList.remove('is-selected'));
+        node.classList.add('is-selected');
+        document.getElementById(node.getAttribute('aria-controls'))?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      };
+      document.querySelectorAll('.radial-node').forEach((node) => {
+        node.addEventListener('click', () => selectRadialNode(node));
+        node.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectRadialNode(node); } });
+      });
+      document.querySelectorAll('[id^="process-"] .card, article[id^="process-"]').forEach((card) => card.addEventListener('focusin', () => document.querySelector(`.radial-node[aria-controls="${card.id}"]`)?.classList.add('is-selected')));
+      const guided = document.querySelector('#guided-story');
+      const guidedSteps = [...document.querySelectorAll('.guided-step')];
+      let guidedIndex = 0;
+      const showGuided = (index) => { guidedIndex = Math.max(0, Math.min(index, guidedSteps.length - 1)); guidedSteps.forEach((step, i) => { step.hidden = i !== guidedIndex; }); const counter = guided?.querySelector('.guided-counter'); if (counter) counter.textContent = `Paso ${guidedIndex + 1} de ${guidedSteps.length}`; };
+      document.querySelector('#start-guided')?.addEventListener('click', () => { guided.hidden = false; showGuided(0); guided.querySelector('button')?.focus(); });
+      document.querySelector('#guided-prev')?.addEventListener('click', () => showGuided(guidedIndex - 1));
+      document.querySelector('#guided-next')?.addEventListener('click', () => showGuided(guidedIndex + 1));
+      document.querySelector('#guided-pause')?.addEventListener('click', (event) => { const paused = event.currentTarget.getAttribute('aria-pressed') === 'true'; event.currentTarget.setAttribute('aria-pressed', paused ? 'false' : 'true'); event.currentTarget.textContent = paused ? 'Pausar' : 'Reanudar'; });
+      document.querySelector('#guided-exit')?.addEventListener('click', () => { guided.hidden = true; document.querySelector('#start-guided')?.focus(); });
+      if (guidedSteps.length) showGuided(0);
+
+      const redactFeedback = (value) => String(value ?? '')
+        .replace(/[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/g, '[REDACTED_EMAIL]')
+        .replace(/\+?\d[\d ()-]{8,}\d/g, '[REDACTED_PHONE]')
+        .replace(/\b\d{7,}\b/g, '[REDACTED_ID]')
+        .replace(/\b\d{4}-\d{2}-\d{2}\b/g, '[REDACTED_DATE]')
+        .replace(/\b(?:calle|carrera|cra\.?|cl\.?|avenida|av\.?)\s+[^,.;\n]{1,50}/gi, '[REDACTED_ADDRESS]')
+        .replace(/\b[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:\s+[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)+\b/g, '[REDACTED_NAME]');
+      const feedbackForm = document.querySelector('#feedback-form');
+      feedbackForm?.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const result = feedbackForm.querySelector('.feedback-status');
+        const consent = feedbackForm.querySelector('[name="feedback-consent"]');
+        if (!consent?.checked) { if (result) result.textContent = 'Confirma el consentimiento para preparar un borrador local.'; return; }
+        const entries = [...feedbackForm.querySelectorAll('textarea[data-feedback-id]')].map((field) => ({
+          id: field.dataset.feedbackId,
+          prompt: field.dataset.prompt || field.previousElementSibling?.textContent || 'Feedback',
+          response: redactFeedback(field.value),
+          provenance: field.dataset.provenance || 'unknown',
+          epistemic_status: 'unknown'
+        })).filter((entry) => entry.response.trim());
+        const safeText = JSON.stringify(entries);
+        if (/[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|\+?\d[\d ()-]{8,}\d|\b\d{7,}\b/i.test(safeText)) { if (result) result.textContent = 'Borrador bloqueado: quedó un identificador por revisar localmente.'; return; }
+        if (/\b(?:suicid|autolesi|matarme|hacerme daño|violencia inminente)\b/i.test(safeText)) { if (result) result.textContent = 'Feedback bloqueado: requiere revisión humana urgente según el protocolo local.'; return; }
+        const payload = { schema_version:'1.0', feedback_id:`feedback-${Date.now()}`, artifact_sha256: receipt.artifact_sha256 || receipt.case_sha256 || '', case_ref: receipt.case_ref || 'unknown', audience: document.querySelector('header')?.textContent.includes('Paciente') ? 'patient' : 'clinical', status:'ready', consent_status:'confirmed', entries, raw_content_included:false, privacy_receipt_sha256: receipt.case_sha256 || '' };
+        const url = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type:'application/json' }));
+        const anchor = document.createElement('a'); anchor.href = url; anchor.download = `${payload.feedback_id}.json`; anchor.click(); URL.revokeObjectURL(url);
+        if (result) result.textContent = 'Feedback redactado y descargado localmente. Revísalo antes de incorporarlo al caso.';
+      });
       apply();
     })();
   </script>

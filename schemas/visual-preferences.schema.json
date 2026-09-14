@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hexaflex-clinical.local/schemas/visual-preferences.schema.json",
+  "title": "Clinical viewer visual preferences",
+  "type": "object",
+  "properties": {
+    "mode": { "enum": ["system", "light", "dark"] },
+    "preset": { "enum": ["sage", "ocean", "amber", "plum", "high-contrast"] },
+    "contrast": { "enum": ["standard", "high"] }
+  },
+  "additionalProperties": false
+}

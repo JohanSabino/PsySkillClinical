@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hexaflex-clinical.local/schemas/feedback.schema.json",
+  "title": "Clinical feedback artifact",
+  "type": "object",
+  "required": ["schema_version", "feedback_id", "artifact_sha256", "case_ref", "audience", "status", "consent_status", "entries", "raw_content_included"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "feedback_id": { "type": "string", "pattern": "^[A-Za-z0-9._-]+$" },
+    "artifact_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "case_ref": { "type": "string", "pattern": "^[A-Za-z0-9._-]+$" },
+    "audience": { "enum": ["clinical", "patient", "shareable", "unknown"] },
+    "status": { "enum": ["draft", "ready", "blocked", "review_required", "incorporated"] },
+    "consent_status": { "enum": ["pending", "confirmed", "declined", "unknown"] },
+    "created_at": { "type": "string" },
+    "source_policy": { "enum": ["documents_only", "documents_plus_external", "external_blocked", "unknown"] },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "prompt", "response", "provenance", "epistemic_status"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "prompt": { "type": "string", "minLength": 1 },
+          "response": { "type": "string" },
+          "provenance": { "enum": ["patient_report", "clinician_observation", "shared_decision", "unknown"] },
+          "epistemic_status": { "enum": ["fact", "hypothesis", "shared_decision", "unknown"] },
+          "private": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "raw_content_included": { "const": false },
+    "privacy_receipt_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "additionalProperties": false
+}

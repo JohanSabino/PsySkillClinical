@@ -10,6 +10,11 @@ const SOURCE_POLICIES = new Set(['documents_only', 'documents_plus_external', 'e
 const PRIVACY_MODES = new Set(['redact', 'pseudonymize', 'manual_review', 'unknown']);
 const DOCUMENT_KINDS = new Set(['pdf', 'docx', 'markdown', 'text', 'json', 'unknown']);
 const LEGIBILITY = new Set(['full', 'partial', 'unsupported', 'unreadable']);
+const VISUAL_MODES = new Set(['system', 'light', 'dark']);
+const VISUAL_PRESETS = new Set(['sage', 'ocean', 'amber', 'plum', 'high-contrast']);
+const CONTRAST_MODES = new Set(['standard', 'high']);
+const FEEDBACK_STATUSES = new Set(['draft', 'ready', 'blocked', 'review_required', 'incorporated']);
+const FEEDBACK_PROVENANCE = new Set(['patient_report', 'clinician_observation', 'shared_decision', 'unknown']);
 const RISK_PATTERNS = [
   /\b(?:suicid(?:io|a|al)|autolesi(?:ón|on)|matarme|hacer(?:me|se)?\s+daño)\b/i,
   /\b(?:plan\s+(?:para|de)\s+(?:suicid|matar|hacer)|violencia\s+inminente|agresi[oó]n\s+inminente|abuso\s+en\s+curso)\b/i
@@ -88,6 +93,36 @@ function validatePrivacy(privacy, errors) {
   if (privacy.status === 'blocked') errors.push(issue('PRIVACY_BLOCKED', '$.privacy.status', 'El payload está bloqueado por privacidad.', 'blocking'));
 }
 
+function validateVisual(visual, errors) {
+  if (visual === undefined) return;
+  if (!visual || typeof visual !== 'object' || Array.isArray(visual)) { errors.push(issue('VISUAL_OBJECT', '$.visual', 'visual debe ser un objeto.')); return; }
+  if (visual.mode && !VISUAL_MODES.has(visual.mode)) errors.push(issue('VISUAL_MODE', '$.visual.mode', 'Modo visual no permitido.'));
+  if (visual.preset && !VISUAL_PRESETS.has(visual.preset)) errors.push(issue('VISUAL_PRESET', '$.visual.preset', 'Preset visual no permitido.'));
+  if (visual.contrast && !CONTRAST_MODES.has(visual.contrast)) errors.push(issue('VISUAL_CONTRAST', '$.visual.contrast', 'Modo de contraste no permitido.'));
+}
+
+function validateFeedback(feedback, errors) {
+  if (feedback === undefined) return;
+  if (!feedback || typeof feedback !== 'object' || Array.isArray(feedback)) { errors.push(issue('FEEDBACK_OBJECT', '$.feedback', 'feedback debe ser un objeto.')); return; }
+  for (const key of ['schema_version', 'feedback_id', 'artifact_sha256', 'case_ref', 'audience', 'status', 'consent_status', 'entries', 'raw_content_included']) if (feedback[key] === undefined) errors.push(issue('FEEDBACK_REQUIRED', `$.feedback.${key}`, 'Falta un campo de feedback requerido.'));
+  if (feedback.schema_version && feedback.schema_version !== '1.0') errors.push(issue('FEEDBACK_VERSION', '$.feedback.schema_version', 'Se requiere versión 1.0.'));
+  if (feedback.feedback_id && !/^[A-Za-z0-9._-]+$/.test(feedback.feedback_id)) errors.push(issue('FEEDBACK_ID', '$.feedback.feedback_id', 'feedback_id debe ser un identificador no directo.'));
+  if (feedback.case_ref && !/^[A-Za-z0-9._-]+$/.test(feedback.case_ref)) errors.push(issue('FEEDBACK_CASE_REF', '$.feedback.case_ref', 'case_ref debe ser un identificador no directo.'));
+  if (feedback.artifact_sha256 && !/^[a-f0-9]{64}$/.test(feedback.artifact_sha256)) errors.push(issue('FEEDBACK_ARTIFACT_HASH', '$.feedback.artifact_sha256', 'artifact_sha256 debe ser SHA-256 hexadecimal.'));
+  if (feedback.audience && !['clinical', 'patient', 'shareable', 'unknown'].includes(feedback.audience)) errors.push(issue('FEEDBACK_AUDIENCE', '$.feedback.audience', 'Audiencia de feedback no permitida.'));
+  if (feedback.status && !FEEDBACK_STATUSES.has(feedback.status)) errors.push(issue('FEEDBACK_STATUS', '$.feedback.status', 'Estado de feedback no permitido.'));
+  if (feedback.consent_status && !['pending', 'confirmed', 'declined', 'unknown'].includes(feedback.consent_status)) errors.push(issue('FEEDBACK_CONSENT', '$.feedback.consent_status', 'Estado de consentimiento de feedback no permitido.'));
+  if (feedback.raw_content_included === true) errors.push(issue('FEEDBACK_RAW_CONTENT', '$.feedback.raw_content_included', 'El feedback no puede incluir contenido crudo.', 'blocking'));
+  if (feedback.entries !== undefined && !Array.isArray(feedback.entries)) errors.push(issue('FEEDBACK_ENTRIES', '$.feedback.entries', 'entries debe ser un arreglo.'));
+  for (const [index, entry] of (feedback.entries ?? []).entries()) {
+    const subject = `$.feedback.entries[${index}]`;
+    if (!entry || typeof entry !== 'object') { errors.push(issue('FEEDBACK_ENTRY_OBJECT', subject, 'Cada entrada de feedback debe ser un objeto.')); continue; }
+    for (const key of ['id', 'prompt', 'response', 'provenance', 'epistemic_status']) if (entry[key] === undefined) errors.push(issue('FEEDBACK_ENTRY_REQUIRED', `${subject}.${key}`, 'Falta un campo de entrada de feedback.'));
+    if (entry.provenance && !FEEDBACK_PROVENANCE.has(entry.provenance)) errors.push(issue('FEEDBACK_ENTRY_PROVENANCE', `${subject}.provenance`, 'Procedencia de feedback no permitida.'));
+    if (entry.epistemic_status && !STATUSES.has(entry.epistemic_status)) errors.push(issue('FEEDBACK_ENTRY_STATUS', `${subject}.epistemic_status`, 'Estatus epistémico de feedback no permitido.'));
+  }
+}
+
 function scanRisk(data) {
   const hits = [];
   for (const entry of strings(data)) {
@@ -142,6 +177,8 @@ export function validateCase(data, options = {}) {
   validateSessionConfig(data.session_config, errors);
   validateDocuments(data.documents, errors);
   validatePrivacy(data.privacy, errors);
+  validateVisual(data.visual, errors);
+  validateFeedback(data.feedback, errors);
   if (!data.formulation || typeof data.formulation !== 'object') errors.push(issue('FORMULATION_REQUIRED', '$.formulation', 'Falta formulation.'));
   const ids = new Set();
   const addId = (id, subject) => { if (!id) return; if (ids.has(id)) errors.push(issue('DUPLICATE_ID', subject, `ID repetido: ${id}.`)); ids.add(id); };
@@ -224,7 +261,7 @@ export function validateCase(data, options = {}) {
 
 function buildChecks(errors, warnings) {
   const blocking = errors.filter((entry) => entry.severity === 'blocking' || entry.severity === 'error');
-  const schemaCodes = /^(?:SCHEMA_VERSION|META_REQUIRED|SOURCES_REQUIRED|FORMULATION_REQUIRED|ITEM_REQUIRED|ITEM_NOT_OBJECT|INVALID_(?:LOCALE|AUDIENCE|PROVENANCE|SOURCE_KIND|EPISTEMIC_STATUS|PROCESS|RELATION_KIND|INTERVENTION_STATUS|REVISION_STATUS)|ARRAY_REQUIRED|PATTERN_TITLE|PROCESSES_REQUIRED|RELATION_REQUIRED|SESSION_REQUIRED|SESSION_ARRAY_REQUIRED|INTERVENTION_REQUIRED|REVISION_REQUIRED|DUPLICATE_ID|REVISION_ORDER|SOURCE_POLICY|SOURCE_EXTERNAL_|SESSION_CONFIG_|DOCUMENT_|FRAGMENT_)/;
+  const schemaCodes = /^(?:SCHEMA_VERSION|META_REQUIRED|SOURCES_REQUIRED|FORMULATION_REQUIRED|ITEM_REQUIRED|ITEM_NOT_OBJECT|INVALID_(?:LOCALE|AUDIENCE|PROVENANCE|SOURCE_KIND|EPISTEMIC_STATUS|PROCESS|RELATION_KIND|INTERVENTION_STATUS|REVISION_STATUS)|ARRAY_REQUIRED|PATTERN_TITLE|PROCESSES_REQUIRED|RELATION_REQUIRED|SESSION_REQUIRED|SESSION_ARRAY_REQUIRED|INTERVENTION_REQUIRED|REVISION_REQUIRED|DUPLICATE_ID|REVISION_ORDER|SOURCE_POLICY|SOURCE_EXTERNAL_|SESSION_CONFIG_|DOCUMENT_|FRAGMENT_|VISUAL_|FEEDBACK_)/;
   return [
     { name: 'schema', passed: !errors.some((entry) => schemaCodes.test(entry.code)) },
     { name: 'provenance', passed: !errors.some((entry) => /PROVENANCE|EPISTEMIC/.test(entry.code)) },

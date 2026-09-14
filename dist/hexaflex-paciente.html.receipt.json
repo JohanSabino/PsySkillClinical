@@ -38,7 +38,9 @@
   ],
   "warnings": [],
   "case_sha256": "ea9e33135942f1ab4d2609c3d6433a9a23c27ed1b70a9961fbce70e07684f7b0",
+  "artifact_sha256": "9e24177bf2725e8532e0a0b97b0ee14080a4731e4764716f163a40d06544ad63",
+  "artifact_binding": "source-case",
   "output": "C:\\Users\\psian\\Documents\\Projects\\Skills\\hexaflex-clinical\\dist\\hexaflex-paciente.html",
-  "artifact_sha256": "116c47339ca98a6a2a5ca58559e2dad269171c7e49065c6bb3ac9f5337f9734d",
-  "bytes": 15147
+  "source_artifact_sha256": "ea9e33135942f1ab4d2609c3d6433a9a23c27ed1b70a9961fbce70e07684f7b0",
+  "bytes": 32682
 }
