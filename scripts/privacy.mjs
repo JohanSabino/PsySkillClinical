@@ -148,6 +148,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToP
     const names = []; for (let index = 0; index < args.length; index += 1) if (args[index] === '--name' && args[index + 1]) names.push(args[++index]);
     try {
       const result = prepareModelPayload(data, { mode: args.includes('--mode') ? args[args.indexOf('--mode') + 1] : 'redact', names });
+      fs.mkdirSync(path.dirname(path.resolve(output)), { recursive: true });
       fs.writeFileSync(path.resolve(output), JSON.stringify(result.payload, null, 2));
       fs.writeFileSync(`${path.resolve(output)}.privacy.json`, JSON.stringify(result.receipt, null, 2));
       console.log(JSON.stringify({ status: result.status, receipt: result.receipt, preview: result.preview }, null, 2));

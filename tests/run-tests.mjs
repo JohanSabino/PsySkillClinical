@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -150,4 +151,9 @@ assert.equal(changedPolicyReceipt.previous_receipt.code, 'SOURCE_POLICY_CHANGED'
 
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'hexaflex-tests-'));
 fs.writeFileSync(path.join(temp, 'case.json'), JSON.stringify(example));
-console.log(JSON.stringify({ ok: true, tests: 40, temp }, null, 2));
+const nestedOutput = path.join(temp, 'nested', 'model-ready.json');
+const privacyCli = spawnSync(process.execPath, [path.join(root, 'scripts', 'privacy.mjs'), path.join(root, 'examples', 'synthetic-case.json'), nestedOutput, '--mode', 'redact'], { encoding: 'utf8' });
+assert.equal(privacyCli.status, 0, `privacy CLI debe crear carpetas de salida: ${privacyCli.stderr}`);
+assert.equal(fs.existsSync(nestedOutput), true, 'privacy CLI debe escribir el payload model-ready');
+assert.equal(fs.existsSync(`${nestedOutput}.privacy.json`), true, 'privacy CLI debe escribir el recibo');
+console.log(JSON.stringify({ ok: true, tests: 43, temp }, null, 2));
